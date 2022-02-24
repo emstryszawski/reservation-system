@@ -1,0 +1,5 @@
+filtering with JpaRepository https://www.baeldung.com/spring-data-jpa-pagination-sorting
+
+add price column to offer
+
+add Profile table 1:1 with User table

@@ -1,2 +1,11 @@
-package dk.bec.polonez.reservationsystem.dto;public class CreateOfferDto {
+package dk.bec.polonez.reservationsystem.dto;
+
+import lombok.Data;
+
+@Data
+public class CreateOfferDto {
+
+    private String name;
+
+    private String description;
 }
