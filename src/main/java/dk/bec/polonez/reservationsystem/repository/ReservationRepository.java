@@ -1,5 +1,4 @@
 package dk.bec.polonez.reservationsystem.repository;
 
-public interface UserRepository {
-
+public interface ReservationRepository {
 }
