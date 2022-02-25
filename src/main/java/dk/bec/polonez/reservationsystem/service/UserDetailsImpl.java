@@ -1,35 +1,24 @@
-package dk.bec.polonez.reservationsystem.model;
+package dk.bec.polonez.reservationsystem.service;
 
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 import java.util.Collection;
 
-@Entity
-@Data
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    private String username;
-
-    private String password;
-
-    private String name;
-
-    private String email;
-
-    @ManyToOne
-    @JoinColumn
-    private Role role;
-
-    private boolean blocked;
+public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
         return null;
     }
 
