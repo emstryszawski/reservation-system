@@ -1,5 +1,6 @@
 package dk.bec.polonez.reservationsystem.service;
 
+import dk.bec.polonez.reservationsystem.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,10 @@ public class UserService {
 
     public void a() {
 
+    }
+
+    public User getById(Long id) {
+        return userRepository.getById(id);
     }
 
 }
