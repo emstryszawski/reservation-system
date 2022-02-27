@@ -1,6 +1,6 @@
 package dk.bec.polonez.reservationsystem.config;
 
-import dk.bec.polonez.reservationsystem.service.UserDetailsServiceImpl;
+import dk.bec.polonez.reservationsystem.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserService userDetailsService;
 
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService) {
+    public WebSecurityConfig(UserService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
