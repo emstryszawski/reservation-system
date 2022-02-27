@@ -1,6 +1,5 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.config.JwtUtils;
 import dk.bec.polonez.reservationsystem.dto.LoginRequest;
 import dk.bec.polonez.reservationsystem.dto.LoginResponse;
 import dk.bec.polonez.reservationsystem.dto.SignupRequest;
@@ -28,36 +27,16 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/user/")
 public class UserController {
 
-    private final AuthenticationManager authenticationManager;
-
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
 
     private final PasswordEncoder encoder;
 
-    private final JwtUtils jwtUtils;
-
-    public UserController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils) {
-        this.authenticationManager = authenticationManager;
+    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
-        this.jwtUtils = jwtUtils;
-    }
-
-    @PostMapping("login")
-    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        org.springframework.security.core.userdetails.User userDetails =
-                (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .build();
     }
 
     @PostMapping("signup")
