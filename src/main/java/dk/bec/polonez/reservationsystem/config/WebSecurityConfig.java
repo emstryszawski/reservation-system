@@ -56,15 +56,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.applyPermitDefaultValues();
-        corsConfiguration.setAllowedOrigins(Collections.singletonList("*"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
 }
