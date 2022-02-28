@@ -1,4 +1,11 @@
 package dk.bec.polonez.reservationsystem.repository;
 
-public interface DiscountRepository {
+import dk.bec.polonez.reservationsystem.model.Discount;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+
+@Repository
+public interface DiscountRepository extends JpaRepository<Discount, Integer>{
+    int getByCode(String code);
 }
