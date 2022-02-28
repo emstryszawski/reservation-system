@@ -34,4 +34,16 @@ public class OfferController {
     public ResponseOfferDto addOffer(@RequestBody CreateOfferDto offerDto) {
         return offerService.addOffer(offerDto);
     }
+
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseOfferDto updateOffer(@PathVariable long id, @RequestBody CreateOfferDto offerDto) {
+        return offerService.updateOffer(id, offerDto);
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseOfferDto deleteOffer(@PathVariable long id) {
+        return offerService.deleteOffer(id);
+    }
 }
