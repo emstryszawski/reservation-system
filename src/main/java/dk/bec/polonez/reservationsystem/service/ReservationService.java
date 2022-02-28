@@ -7,6 +7,7 @@ import dk.bec.polonez.reservationsystem.model.Offer;
 import dk.bec.polonez.reservationsystem.model.Reservation;
 import dk.bec.polonez.reservationsystem.model.User;
 import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
+import dk.bec.polonez.reservationsystem.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,14 +20,14 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     private final OfferService offerService;
 
 
-    public ReservationService(ReservationRepository reservationRepository, UserService userService, OfferService offerService) {
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferService offerService) {
         this.reservationRepository = reservationRepository;
-        this.userService = userService;
+        this.userRepository = userRepository;
         this.offerService = offerService;
     }
 
@@ -43,7 +44,7 @@ public class ReservationService {
 
 
     public ResponseReservationDto addReservation(CreateReservationDto reservationDto) {
-        User user = userService.getById(reservationDto.getUserId());
+        User user = userRepository.getById(reservationDto.getUserId());
         Offer offer = offerService.getById(reservationDto.getOfferId());
 
         Reservation.ReservationBuilder reservationBuilder = Reservation.builder();
