@@ -3,3 +3,44 @@ filtering with JpaRepository https://www.baeldung.com/spring-data-jpa-pagination
 add price column to offer
 
 add Profile table 1:1 with User table
+----------------------------------------------------------
+
+28.02.2022
+
+WebSecurity - secure endpoints
+
+1.	Users & authentication
+1.	Place Owner:
+1.	Can login as PO TODO
+2.	can manage his/hers place TODO
+3.	add existing features, attractions TODO (controller offerFeature)
+4.	add discount codes
+5.	See all reservations for his place
+2.	System admin
+1.	Create users, block users, unblock
+2.	Verification & Approval of Place-Owner request
+3.	Can add/remove places
+4.	add new features, attractions to places
+3.	Regular user
+1.	Can register himself
+2.	Can login
+3.	Make reservations, cancel, edit
+4.	List all his reservations
+5.	View single reservation by id
+6.	Sort/Filter reservations by date
+4.	Premium user [optional]
+1.	Can use premium features / attractions
+2.	Features:
+1.	Make reservation (can use discount optional code)
+2.	Email notifications
+1.	Notification about current reservation status
+2.	Notification about upcoming events
+3.	Reservation Confirmations
+3.	System
+1.	Login/regiser
+2.	Validations
+1.	Duplicated reservations
+2.	Email/password pattern, unique email/login
+3.	Exceptions handling
+4.	Uses database
+4.	Front-end [optional]
