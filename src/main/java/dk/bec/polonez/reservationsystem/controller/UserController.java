@@ -1,21 +1,12 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.dto.LoginRequest;
-import dk.bec.polonez.reservationsystem.dto.LoginResponse;
-import dk.bec.polonez.reservationsystem.dto.SignupRequest;
-import dk.bec.polonez.reservationsystem.dto.SignupResponse;
+import dk.bec.polonez.reservationsystem.dto.userDto.SignupRequest;
+import dk.bec.polonez.reservationsystem.dto.userDto.SignupResponse;
 import dk.bec.polonez.reservationsystem.model.Role;
 import dk.bec.polonez.reservationsystem.model.User;
 import dk.bec.polonez.reservationsystem.repository.RoleRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

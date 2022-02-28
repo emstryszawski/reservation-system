@@ -1,8 +1,8 @@
 package dk.bec.polonez.reservationsystem.service;
 
 
-import dk.bec.polonez.reservationsystem.dto.CreateOfferDto;
-import dk.bec.polonez.reservationsystem.dto.ResponseOfferDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.CreateOfferDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseOfferDto;
 import dk.bec.polonez.reservationsystem.model.Offer;
 import dk.bec.polonez.reservationsystem.model.User;
 import dk.bec.polonez.reservationsystem.repository.OfferRepository;

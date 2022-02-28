@@ -1,7 +1,7 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.dto.CreateFeatureDto;
-import dk.bec.polonez.reservationsystem.dto.ResponseFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.CreateFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseFeatureDto;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.service.FeatureService;
 import org.springframework.http.HttpStatus;

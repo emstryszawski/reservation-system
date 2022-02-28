@@ -1,10 +1,10 @@
 package dk.bec.polonez.reservationsystem.controller;
 
 
-import dk.bec.polonez.reservationsystem.dto.*;
-import dk.bec.polonez.reservationsystem.model.Offer;
+import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
+import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
+import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
 import dk.bec.polonez.reservationsystem.model.Reservation;
-import dk.bec.polonez.reservationsystem.service.OfferService;
 import dk.bec.polonez.reservationsystem.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

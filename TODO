@@ -8,41 +8,41 @@ add Profile table 1:1 with User table
 28.02.2022
 
 WebSecurity - secure endpoints
-TODO (add more OneToMany relations)
-TODO OwnerDTO
-TODO DTO for all endpoint sort + sensable attributes
-TODO delete UserDetails from User
-TODO endpoints from OfferFeautre to Offer and Feature separately
+TODO (add more OneToMany relations) Olek
+TODO OwnerDTO Kacper
+TODO SignupDto fill all columns Kacper
+TODO DTO for all endpoint sort + sensable attributes DLA KAŻDEGO controller + always DTO
+TODO endpoints from OfferFeautre to Offer and Feature separately Kacper
 1.	Users & authentication
 1.	Place Owner:
-1.	Can login as PO TODO
-2.	can manage his/hers place TODO
-3.	add existing features, attractions TODO (controller offerFeature)
-4.	add discount codes TODO (add crud to discountController)
+1.	Can login as PO TODO AuthService Jakub
+2.	can manage his/hers place TODO Emil
+3.	add existing features, attractions TODO (controller feature) Krystian
+4.	add discount codes TODO (add crud to discountController) Karol
 5.	See all reservations for his place TODO (extract user type and check if its user or placeowner then return specific reservations)
 2.	System admin
-1.	Create users, block users, unblock TODO (userController endpoints)
-2.	Verification & Approval of Place-Owner request TODO (offerController add accepting and declining endpoint/s)
-3.	Can add/remove places TODO (whole CRUD methods in offerController)
-4.	add new features, attractions to places TODO (featureController - whole CRUD needed, add endpoint for OfferFeatureController)
+1.	Create users, block users, unblock TODO (userController endpoints) Mateusz
+2.	Verification & Approval of Place-Owner request TODO (offerController add accepting and declining endpoint/s) Emil
+3.	Can add/remove places TODO (whole CRUD methods in offerController) Emil
+4.	add new features, attractions to places TODO (featureController - whole CRUD needed, add endpoint for OfferController) Karol
 3.	Regular user
 1.	Can register himself TODO DONE
 2.	Can login TODO DONE
-3.	Make reservations, cancel, edit TODO (check reservation status and then delete or return 403)
-4.	List all his reservations TODO (extract user type and check if its user or placeowner then return specific reservations)
+3.	Make reservations, cancel, edit TODO (check reservation status and then delete or return 403) Mateusz
+4.	List all his reservations TODO (extract user type and check if its user or placeowner then return specific reservations) Mateusz
 5.	View single reservation by id TODO DONE
-6.	Sort/Filter reservations by date TODO
+6.	Sort/Filter reservations by date TODO Mateusz
 4.	Premium user [optional]
 1.	Can use premium features / attractions
 2.	Features:
-1.	Make reservation (can use discount optional code) TODO add to DTO discount code and validate it through offer FK
+1.	Make reservation (can use discount optional code) TODO add to DTO discount code and validate it through offer FK Mateusz
 2.	Email notifications TODO
 1.	Notification about current reservation status TODO
 2.	Notification about upcoming events TODO
 3.	Reservation Confirmations TODO
 3.	System
 1.	Login/regiser TODO DONE
-2.	Validations TODO
+2.	Validations TODO per Controller
 1.	Duplicated reservations TODO
 2.	Email/password pattern, unique email/login TODO email pattern
 3.	Exceptions handling

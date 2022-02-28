@@ -1,7 +1,7 @@
 package dk.bec.polonez.reservationsystem.service;
 
-import dk.bec.polonez.reservationsystem.dto.CreateFeatureDto;
-import dk.bec.polonez.reservationsystem.dto.ResponseFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.CreateFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseFeatureDto;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.repository.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;

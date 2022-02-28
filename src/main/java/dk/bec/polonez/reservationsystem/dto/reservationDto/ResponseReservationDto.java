@@ -1,10 +1,13 @@
-package dk.bec.polonez.reservationsystem.dto;
+package dk.bec.polonez.reservationsystem.dto.reservationDto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class CreateReservationDto {
+@Builder
+public class ResponseReservationDto {
     //Long on dates - timestamp
+    private Long id;
     private Long createdAt;
     private Long dateFrom;
     private Long dateTo;

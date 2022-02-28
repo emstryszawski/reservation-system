@@ -1,4 +1,4 @@
-package dk.bec.polonez.reservationsystem.dto;
+package dk.bec.polonez.reservationsystem.dto.userDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
