@@ -13,4 +13,6 @@ public class CreateOfferDto {
 
     @Size(max = 2000)
     private String description;
+
+    private long ownerId;
 }

@@ -50,4 +50,16 @@ public class OfferController {
     public ResponseOfferFeatureDto addFeatureToOffer(@RequestParam long featureId, @PathVariable long offerId) {
         return offerService.addFeatureToOffer(featureId, offerId);
     }
+
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseOfferDto updateOffer(@PathVariable long id, @RequestBody CreateOfferDto offerDto) {
+        return offerService.updateOffer(id, offerDto);
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseOfferDto deleteOffer(@PathVariable long id) {
+        return offerService.deleteOffer(id);
+    }
 }
