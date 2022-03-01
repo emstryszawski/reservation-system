@@ -5,15 +5,16 @@ import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDt
 import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
 import dk.bec.polonez.reservationsystem.model.Offer;
 import dk.bec.polonez.reservationsystem.model.Reservation;
+import dk.bec.polonez.reservationsystem.model.ReservationStatus;
 import dk.bec.polonez.reservationsystem.model.User;
+import dk.bec.polonez.reservationsystem.repository.OfferRepository;
 import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ReservationService {
@@ -22,17 +23,28 @@ public class ReservationService {
 
     private final UserRepository userRepository;
 
-    private final OfferService offerService;
+    private final OfferRepository offerRepository;
 
 
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferService offerService) {
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
-        this.offerService = offerService;
+        this.offerRepository = offerRepository;
     }
 
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
+    }
+
+    public ArrayList<Reservation> getAllSortedByDate() {
+        ArrayList<Reservation> reservations = new ArrayList<>(getAll());
+        reservations.sort(Comparator.comparingLong(Reservation::getCreatedAt));
+
+        return reservations;
+    }
+
+    public List<Reservation> getAllByUserId(Long id) {
+        return reservationRepository.findByUser(userRepository.getById(id));
     }
 
     public Reservation getById(long id) {
@@ -45,7 +57,7 @@ public class ReservationService {
 
     public ResponseReservationDto addReservation(CreateReservationDto reservationDto) {
         User user = userRepository.getById(reservationDto.getUserId());
-        Offer offer = offerService.getById(reservationDto.getOfferId());
+        Offer offer = offerRepository.getById(reservationDto.getOfferId());
 
         Reservation.ReservationBuilder reservationBuilder = Reservation.builder();
 
@@ -53,7 +65,7 @@ public class ReservationService {
                 .createdAt(reservationDto.getCreatedAt())
                 .dateFrom(reservationDto.getDateFrom())
                 .dateTo(reservationDto.getDateTo())
-                .status(reservationDto.getStatus())
+                .status(ReservationStatus.PREAPPROVED.name())
                 .user(user)
                 .offer(offer)
                 .build();
@@ -99,7 +111,18 @@ public class ReservationService {
                 .build();
     }
 
-    public boolean deleteReservation(Long id) {
+    public boolean deleteReservation(Long id) throws ResponseStatusException {
+        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
+        Reservation reservation;
+
+        if(optionalReservation.isPresent())
+            reservation = optionalReservation.get();
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: This reservation not exist!");
+
+        if(!reservation.getStatus().equals(ReservationStatus.PREAPPROVED.name()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: This reservation is already approved!");
+
         reservationRepository.deleteById(id);
         return true;
     }

@@ -9,10 +9,11 @@ import dk.bec.polonez.reservationsystem.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reservation/")
+@RequestMapping("/api/reservations/")
 public class ReservationController {
 
     private final ReservationService reservationService;
@@ -47,5 +48,15 @@ public class ReservationController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseReservationDto updateReservation(@RequestBody UpdateReservationDto reservationDto) {
         return reservationService.updateReservation(reservationDto);
+    }
+
+    @GetMapping("{userId}")
+    public List<Reservation> getAllUserReservations(@PathVariable long userId) {
+        return reservationService.getAllByUserId(userId);
+    }
+
+    @GetMapping("sortedByDate")
+    public ArrayList<Reservation> getAllReservationsSortedByDate() {
+        return reservationService.getAllSortedByDate();
     }
 }
