@@ -6,7 +6,6 @@ import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
 import dk.bec.polonez.reservationsystem.model.Offer;
 import dk.bec.polonez.reservationsystem.model.Reservation;
 import dk.bec.polonez.reservationsystem.model.User;
-import dk.bec.polonez.reservationsystem.repository.OfferRepository;
 import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -23,13 +22,13 @@ public class ReservationService {
 
     private final UserRepository userRepository;
 
-    private final OfferRepository offerRepository;
+    private final OfferService offerService;
 
 
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository) {
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferService offerService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
-        this.offerRepository = offerRepository;
+        this.offerService = offerService;
     }
 
     public List<Reservation> getAll() {
@@ -46,7 +45,7 @@ public class ReservationService {
 
     public ResponseReservationDto addReservation(CreateReservationDto reservationDto) {
         User user = userRepository.getById(reservationDto.getUserId());
-        Offer offer = offerRepository.getById(reservationDto.getOfferId());
+        Offer offer = offerService.getById(reservationDto.getOfferId());
 
         Reservation.ReservationBuilder reservationBuilder = Reservation.builder();
 

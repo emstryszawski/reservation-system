@@ -45,14 +45,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, LOGIN_URL, SIGN_UP_URL).permitAll()
-                .antMatchers("/h2-console").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), LOGIN_URL))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.headers().frameOptions().disable();
     }
 
     @Bean

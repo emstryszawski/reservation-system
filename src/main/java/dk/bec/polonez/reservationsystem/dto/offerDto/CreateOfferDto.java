@@ -8,6 +8,4 @@ public class CreateOfferDto {
     private String name;
 
     private String description;
-
-    private long ownerId;
 }
