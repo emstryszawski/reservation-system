@@ -1,9 +1,6 @@
 package dk.bec.polonez.reservationsystem.service;
 
-import dk.bec.polonez.reservationsystem.dto.userDto.ProfileRequest;
-import dk.bec.polonez.reservationsystem.dto.userDto.ProfileResponse;
-import dk.bec.polonez.reservationsystem.dto.userDto.SignupRequest;
-import dk.bec.polonez.reservationsystem.dto.userDto.SignupResponse;
+import dk.bec.polonez.reservationsystem.dto.userDto.*;
 import dk.bec.polonez.reservationsystem.model.Role;
 import dk.bec.polonez.reservationsystem.model.User;
 import dk.bec.polonez.reservationsystem.repository.RoleRepository;
@@ -20,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -82,6 +80,24 @@ public class UserService implements UserDetailsService {
                 .username(savedUser.getUsername())
                 .email(savedUser.getEmail())
                 .build();
+    }
+
+    public ProfileResponse updateUser(Long id, UpdateRequest updatedProfile) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        User user;
+        if(optionalUser.isPresent())
+            user = optionalUser.get();
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: User not found");
+
+        user.setUsername(updatedProfile.getUsername());
+        user.setEmail(updatedProfile.getEmail());
+        user.setName(updatedProfile.getName());
+        user.setPassword(updatedProfile.getPassword());
+
+        userRepository.save(user);
+
+        return null;
     }
 
 

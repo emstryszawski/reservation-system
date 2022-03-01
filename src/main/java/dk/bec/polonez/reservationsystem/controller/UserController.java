@@ -26,7 +26,7 @@ public class UserController {
 
 //    @PutMapping()
 //    public ProfileResponse updateUser(@RequestBody ProfileRequest profileRequest) {
-//
+//        return userService.updateUser(profileRequest);
 //    }
 
     @GetMapping("all")
