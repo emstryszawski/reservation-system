@@ -44,8 +44,8 @@ public class OfferController {
         return offerService.deleteOffer(id);
     }
 
-    @PostMapping("feature")
-    public ResponseOfferFeatureDto addFeatureToOffer(@RequestParam long featureId, @RequestParam long offerId) {
+    @PostMapping("{id}/feature")
+    public ResponseOfferFeatureDto addFeatureToOffer(@RequestParam long featureId, @PathVariable long offerId) {
         return offerService.addFeatureToOffer(featureId, offerId);
     }
 }
