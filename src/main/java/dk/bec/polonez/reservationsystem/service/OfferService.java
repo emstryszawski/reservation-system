@@ -40,6 +40,7 @@ public class OfferService {
     public OfferDto getById(long id) {
         Offer offer = offerRepository.getById(id);
 
+        //
         return modelMapper.map(offer, OfferDto.class);
     }
 
