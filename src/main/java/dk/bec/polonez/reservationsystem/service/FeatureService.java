@@ -1,12 +1,9 @@
 package dk.bec.polonez.reservationsystem.service;
 
-import com.sun.xml.bind.v2.TODO;
-import dk.bec.polonez.reservationsystem.dto.offerDto.CreateFeatureDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseFeatureDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.UpdateFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.feature.CreateFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.feature.ResponseFeatureDto;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.repository.FeatureRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +16,6 @@ public class FeatureService {
 
     private final FeatureRepository featureRepository;
 
-    @Autowired
     public FeatureService(FeatureRepository featureRepository) {
         this.featureRepository = featureRepository;
     }

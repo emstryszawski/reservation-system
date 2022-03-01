@@ -1,8 +1,7 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.dto.offerDto.CreateFeatureDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseFeatureDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.UpdateFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.feature.CreateFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.feature.ResponseFeatureDto;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.service.FeatureService;
 import org.springframework.http.HttpStatus;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/feature/")
+@RequestMapping("/api/features/")
 public class FeatureController {
     private final FeatureService featureService;
 
