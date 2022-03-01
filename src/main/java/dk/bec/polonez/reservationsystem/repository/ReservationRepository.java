@@ -1,5 +1,6 @@
 package dk.bec.polonez.reservationsystem.repository;
 
+import dk.bec.polonez.reservationsystem.model.Offer;
 import dk.bec.polonez.reservationsystem.model.Reservation;
 import dk.bec.polonez.reservationsystem.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,7 @@ import java.util.List;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
     List<Reservation> findByUser(User user);
+
+    List<Reservation> findByOffer(Offer offer);
 
 }

@@ -4,7 +4,6 @@ package dk.bec.polonez.reservationsystem.controller;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
-import dk.bec.polonez.reservationsystem.model.Reservation;
 import dk.bec.polonez.reservationsystem.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +22,12 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<Reservation> getAllReservations() {
-        return reservationService.getAll();
+    public List<ResponseReservationDto> getAllReservations() {
+        return reservationService.getAll(false);
     }
 
     @GetMapping("{id}")
-    public Reservation getReservationById(@PathVariable long id) {
+    public ResponseReservationDto getReservationById(@PathVariable long id) {
         return reservationService.getById(id);
     }
 
@@ -50,13 +49,18 @@ public class ReservationController {
         return reservationService.updateReservation(reservationDto);
     }
 
-    @GetMapping("{userId}")
-    public List<Reservation> getAllUserReservations(@PathVariable long userId) {
-        return reservationService.getAllByUserId(userId);
+    @GetMapping("mine")
+    public List<ResponseReservationDto> getAllMyReservations() {
+        return reservationService.getAllMine(false);
+    }
+
+    @GetMapping("mineSorted")
+    public List<ResponseReservationDto> getAllMyReservationsSorted() {
+        return reservationService.getAllMine(true);
     }
 
     @GetMapping("sortedByDate")
-    public ArrayList<Reservation> getAllReservationsSortedByDate() {
-        return reservationService.getAllSortedByDate();
+    public ArrayList<ResponseReservationDto> getAllReservationsSortedByDate() {
+        return reservationService.getAll(true);
     }
 }

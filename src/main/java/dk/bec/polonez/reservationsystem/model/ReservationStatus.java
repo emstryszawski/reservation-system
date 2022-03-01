@@ -1,8 +1,9 @@
 package dk.bec.polonez.reservationsystem.model;
 
 public enum ReservationStatus {
-    PREAPPROVED,
+    PENDING,
     APPROVED,
+    CANCELLED,
     IN_PROGRESS,
     FINISHED
 }
