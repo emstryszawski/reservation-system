@@ -1,7 +1,9 @@
 package dk.bec.polonez.reservationsystem.service;
 
+import com.sun.xml.bind.v2.TODO;
 import dk.bec.polonez.reservationsystem.dto.offerDto.CreateFeatureDto;
 import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.UpdateFeatureDto;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.repository.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class FeatureService {
         return featureRepository.findAll();
     }
 
-    public Feature getById(long id) {
+    public Feature getFeatureById(long id) {
         Optional<Feature> optionalFeature = featureRepository.findById(id);
         return optionalFeature.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
@@ -40,8 +42,36 @@ public class FeatureService {
         Feature savedFeature = featureRepository.save(feature);
         ResponseFeatureDto.ResponseFeatureDtoBuilder response = ResponseFeatureDto.builder();
         return response
+                .id(savedFeature.getId())
                 .name(savedFeature.getName())
                 .description(savedFeature.getDescription())
+                .build();
+    }
+
+    public ResponseFeatureDto updateFeature(CreateFeatureDto featureDto, long id) {
+        Feature.FeatureBuilder builder = Feature.builder();
+        Feature feature = builder
+                .id(id)
+                .name(featureDto.getName())
+                .description(featureDto.getDescription())
+                .build();
+        Feature savedFeature = featureRepository.save(feature);
+        ResponseFeatureDto.ResponseFeatureDtoBuilder response = ResponseFeatureDto.builder();
+        return response
+                .id(savedFeature.getId())
+                .name(savedFeature.getName())
+                .description(savedFeature.getDescription())
+                .build();
+    }
+
+    public ResponseFeatureDto deleteFeatureById(long id) {
+        Feature deletedFeature = featureRepository.getById(id);
+        featureRepository.deleteById(id);
+        ResponseFeatureDto.ResponseFeatureDtoBuilder response = ResponseFeatureDto.builder();
+        return response
+                .id(deletedFeature.getId())
+                .name(deletedFeature.getName())
+                .description(deletedFeature.getDescription())
                 .build();
     }
 }
