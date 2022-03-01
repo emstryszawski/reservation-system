@@ -1,9 +1,6 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.dto.userDto.ProfileRequest;
-import dk.bec.polonez.reservationsystem.dto.userDto.ProfileResponse;
-import dk.bec.polonez.reservationsystem.dto.userDto.SignupRequest;
-import dk.bec.polonez.reservationsystem.dto.userDto.SignupResponse;
+import dk.bec.polonez.reservationsystem.dto.userDto.*;
 import dk.bec.polonez.reservationsystem.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +21,10 @@ public class UserController {
         return userService.createUser(signUpRequest);
     }
 
-//    @PutMapping()
-//    public ProfileResponse updateUser(@RequestBody ProfileRequest profileRequest) {
-//        return userService.updateUser(profileRequest);
-//    }
+    @PutMapping("update")
+    public UpdateResponse updateUser(@RequestBody UpdateRequest updateRequest) {
+        return userService.updateUser(updateRequest);
+    }
 
     @GetMapping("all")
     public List<ProfileResponse> getAll() {
@@ -47,5 +44,10 @@ public class UserController {
     @PutMapping("unblock/{id}")
     public ProfileResponse unblockUser(@PathVariable Long id) {
         return userService.unblock(id);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public DeleteResponse deleteUser(@PathVariable Long id) {
+        return userService.delete(id);
     }
 }

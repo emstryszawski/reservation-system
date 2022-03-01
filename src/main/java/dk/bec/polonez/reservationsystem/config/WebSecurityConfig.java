@@ -12,8 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static dk.bec.polonez.reservationsystem.config.SecurityConstants.LOGIN_URL;
-import static dk.bec.polonez.reservationsystem.config.SecurityConstants.SIGN_UP_URL;
+import static dk.bec.polonez.reservationsystem.config.SecurityConstants.*;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors().and()
                 .csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, LOGIN_URL, SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.POST, LOGIN_URL, SIGN_UP_URL, UPDATE_URL).permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()

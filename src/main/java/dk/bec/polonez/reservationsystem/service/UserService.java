@@ -82,8 +82,8 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public ProfileResponse updateUser(Long id, UpdateRequest updatedProfile) {
-        Optional<User> optionalUser = userRepository.findById(id);
+    public UpdateResponse updateUser(UpdateRequest updatedProfile) {
+        Optional<User> optionalUser = userRepository.findById(updatedProfile.getId());
         User user;
         if(optionalUser.isPresent())
             user = optionalUser.get();
@@ -97,7 +97,16 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
 
-        return null;
+        UpdateResponse response = new UpdateResponse();
+
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setBlocked(user.isBlocked());
+        response.setRoleName(user.getRole().getName());
+        response.setName(user.getName());
+
+        return response;
     }
 
 
@@ -121,11 +130,26 @@ public class UserService implements UserDetailsService {
 
         user.setBlocked(false);
 
-
-
         User unblockedUser = userRepository.save(user);
 
         return userToResponse(unblockedUser);
+    }
+
+    public DeleteResponse delete(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        User user;
+        if(optionalUser.isPresent())
+            user = optionalUser.get();
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: User not found");
+
+        userRepository.delete(user);
+
+        return DeleteResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .message("User deleted.")
+                .build();
     }
 
     public ProfileResponse userToResponse(User user) {

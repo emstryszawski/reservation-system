@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateRequest {
 
+    private Long id;
+
     private String username;
 
     private String password;
