@@ -21,3 +21,17 @@ VALUES
     (3,'Testowy 3','Opis 3');
 -- SELECT * FROM USER U
 -- JOIN ROLE R ON U.ROLE_ID = R.ID
+
+INSERT INTO NOTIFICATION_TEMPLATE(ID, NAME, SUBJECT, MESSAGE)
+VALUES(1, 'RESERVATION_STATUS', 'Status rezerwacji',
+       'Cześć, %s.\n' ||
+       'Twoja rezerwacja %s zmieniła status na %s');
+INSERT INTO NOTIFICATION_TEMPLATE(ID, NAME, SUBJECT, MESSAGE)
+VALUES(2, 'UPCOMING_EVENTS', 'Nadchodzące wydarzenia',
+       'Cześć, %s.\n' ||
+       'Masz następujące rezerwacje w najbliższym czasie: \n' ||
+       '%s');
+INSERT INTO NOTIFICATION_TEMPLATE(ID, NAME, SUBJECT, MESSAGE)
+VALUES(3, 'RESERVATION_CONFIRMATION', 'Potwierdzenie rezerwacji',
+       'Cześć, %s.\n' ||
+       'Twoja rezerwacja %s została potwierdzona.');
