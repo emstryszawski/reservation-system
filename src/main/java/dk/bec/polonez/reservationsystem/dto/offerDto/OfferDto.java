@@ -1,18 +1,21 @@
 package dk.bec.polonez.reservationsystem.dto.offerDto;
 
-import dk.bec.polonez.reservationsystem.model.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class ResponseOfferDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class OfferDto {
 
     private long id;
 
     private String name;
 
-    private long ownerId;
+    private OfferOwnerDto owner;
 
     private String description;
 }

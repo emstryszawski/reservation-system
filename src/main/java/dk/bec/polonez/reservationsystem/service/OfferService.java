@@ -2,84 +2,84 @@ package dk.bec.polonez.reservationsystem.service;
 
 
 import dk.bec.polonez.reservationsystem.dto.offerDto.CreateOfferDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseOfferDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.OfferDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseOfferFeatureDto;
+import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.model.Offer;
-import dk.bec.polonez.reservationsystem.model.User;
+import dk.bec.polonez.reservationsystem.repository.FeatureRepository;
 import dk.bec.polonez.reservationsystem.repository.OfferRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OfferService {
 
     private final OfferRepository offerRepository;
-    private final UserRepository userRepository;
+    private final FeatureRepository featureRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public OfferService(OfferRepository offerRepository, UserRepository userRepository) {
+    public OfferService(OfferRepository offerRepository, FeatureRepository featureRepository) {
         this.offerRepository = offerRepository;
-        this.userRepository = userRepository;
+        this.featureRepository = featureRepository;
+        this.modelMapper = new ModelMapper();
     }
 
-    public List<Offer> getAll() {
-        return offerRepository.findAll();
+    public List<OfferDto> getAll() {
+        List<Offer> offers = offerRepository.findAll();
+        return offers.stream()
+                .map(offer -> modelMapper.map(offer, OfferDto.class))
+                .collect(Collectors.toList());
     }
 
-    public Offer getById(long id) {
-        Optional<Offer> optionalOffer = offerRepository.findById(id);
-        return optionalOffer
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public OfferDto getById(long id) {
+        Offer offer = offerRepository.getById(id);
+
+        return modelMapper.map(offer, OfferDto.class);
     }
 
-    public ResponseOfferDto addOffer(CreateOfferDto offerDto) {
-        User owner = userRepository.getById(offerDto.getOwnerId());
-        Offer offer = Offer.builder()
-                .name(offerDto.getName())
-                .owner(owner)
-                .description(offerDto.getDescription())
-                .build();
+    public OfferDto addOffer(CreateOfferDto offerDto) {
+        Offer offer = modelMapper.map(offerDto, Offer.class);
 
         Offer savedOffer = offerRepository.save(offer);
 
-        return ResponseOfferDto.builder()
-                .name(savedOffer.getName())
-                .ownerId(savedOffer.getOwner().getId())
-                .description(savedOffer.getDescription())
-                .build();
+        return modelMapper.map(savedOffer, OfferDto.class);
     }
-    public ResponseOfferDto updateOffer(long id, CreateOfferDto offerDto) {
-        User owner = userRepository.getById(offerDto.getOwnerId());
+
+    public OfferDto updateOffer(long id, CreateOfferDto offerDto) {
         Offer offer = offerRepository.getById(id);
 
-        offer.setName(offerDto.getName());
-        offer.setOwner(owner);
-        offer.setDescription(offerDto.getDescription());
+        modelMapper.map(offerDto, offer);
 
         Offer updatedOffer = offerRepository.save(offer);
 
-        return ResponseOfferDto.builder()
-                .id(updatedOffer.getId())
-                .name(updatedOffer.getName())
-                .ownerId(updatedOffer.getOwner().getId())
-                .description(updatedOffer.getDescription())
-                .build();
+        return modelMapper.map(updatedOffer, OfferDto.class);
     }
 
-    public ResponseOfferDto deleteOffer(long id) {
+    public OfferDto deleteOffer(long id) {
         Offer offerToDelete = offerRepository.getById(id);
+
         offerRepository.delete(offerToDelete);
 
-        return ResponseOfferDto.builder()
-                .id(offerToDelete.getId())
-                .name(offerToDelete.getName())
-                .ownerId(offerToDelete.getOwner().getId())
-                .description(offerToDelete.getDescription())
-                .build();
+        return modelMapper.map(offerToDelete, OfferDto.class);
+    }
+
+    public ResponseOfferFeatureDto addFeatureToOffer(long featureId, long offerId) {
+        Feature feature = featureRepository.getById(featureId);
+        Offer offer = offerRepository.getById(offerId);
+        List<Feature> features = offer.getFeatures();
+
+        features.add(feature);
+
+        offer.setFeatures(features);
+
+        Offer savedOffer = offerRepository.save(offer);
+
+        return modelMapper.map(savedOffer, ResponseOfferFeatureDto.class);
     }
 }
