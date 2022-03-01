@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data
@@ -16,7 +15,7 @@ import java.util.List;
 public class Offer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private long id;
 
     private String name;
@@ -26,7 +25,4 @@ public class Offer {
     private User owner;
 
     private String description;
-
-    @OneToMany
-    private List<Feature> features;
 }
