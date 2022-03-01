@@ -16,5 +16,7 @@ public class NotificationTemplate {
 
     private String name;
 
+    private String subject;
+
     private String message;
 }
