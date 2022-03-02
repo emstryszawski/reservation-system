@@ -1,6 +1,7 @@
 package dk.bec.polonez.reservationsystem.controller;
 
 import dk.bec.polonez.reservationsystem.dto.offerDto.CreateFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.FeatureDto;
 import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseFeatureDto;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.service.FeatureService;
@@ -19,30 +20,27 @@ public class FeatureController {
     }
 
     @GetMapping
-    public List<Feature> getAllFeatures() {
+    public List<FeatureDto> getAllFeatures() {
         return featureService.getAll();
     }
 
     @GetMapping("{id}")
-    public Feature getFeatureById(@PathVariable long id) {
+    public FeatureDto getFeatureById(@PathVariable long id) {
         return featureService.getById(id);
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseFeatureDto addFeature(@RequestBody CreateFeatureDto featureDto) {
+    public FeatureDto addFeature(@RequestBody CreateFeatureDto featureDto) {
         return featureService.addFeature(featureDto);
     }
 
     @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean deleteFeature(@PathVariable long id){
+    public FeatureDto deleteFeature(@PathVariable long id){
         return featureService.deleteFeature(id);
     }
 
-    @PutMapping
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseFeatureDto updateFeature(@RequestBody ResponseFeatureDto featureDto) {
-        return featureService.updateFeature(featureDto);
+    @PutMapping("{id}")
+    public FeatureDto updateFeature(@PathVariable long id, @RequestBody CreateFeatureDto featureDto) {
+        return featureService.updateFeature(id, featureDto);
     }
 }
