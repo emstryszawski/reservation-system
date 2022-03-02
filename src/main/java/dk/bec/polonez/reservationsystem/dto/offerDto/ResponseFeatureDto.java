@@ -5,11 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResponseOfferDto {
+public class ResponseFeatureDto {
 
     private String name;
-
-    private long ownerId;
 
     private String description;
 }
