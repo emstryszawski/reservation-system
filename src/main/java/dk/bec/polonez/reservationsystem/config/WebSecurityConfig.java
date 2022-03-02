@@ -39,14 +39,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors().and()
                 .csrf().disable().authorizeRequests()
+
                 .antMatchers(HttpMethod.POST, LOGIN_URL, SIGN_UP_URL, UPDATE_URL).permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
+
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), LOGIN_URL))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
 
         http.headers().frameOptions().disable();
     }

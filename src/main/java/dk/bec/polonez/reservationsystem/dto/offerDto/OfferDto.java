@@ -9,9 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseFeatureDto {
+public class OfferDto {
+
+    private long id;
 
     private String name;
+
+    private OfferOwnerDto owner;
 
     private String description;
 }

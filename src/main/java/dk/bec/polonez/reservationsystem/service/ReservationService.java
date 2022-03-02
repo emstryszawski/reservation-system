@@ -27,13 +27,13 @@ public class ReservationService {
 
     private final AuthService authService;
 
-
     public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository, AuthService authService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.offerRepository = offerRepository;
         this.authService = authService;
-    }
+}
+
 
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
