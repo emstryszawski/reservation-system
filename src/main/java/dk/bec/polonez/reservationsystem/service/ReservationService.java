@@ -25,11 +25,14 @@ public class ReservationService {
 
     private final OfferRepository offerRepository;
 
+    private final AuthService authService;
 
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository) {
+
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository, AuthService authService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.offerRepository = offerRepository;
+        this.authService = authService;
     }
 
     public List<Reservation> getAll() {
@@ -56,6 +59,9 @@ public class ReservationService {
 
 
     public ResponseReservationDto addReservation(CreateReservationDto reservationDto) {
+        if(authService.isPoLoggedIn())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+
         User user = userRepository.getById(reservationDto.getUserId());
         Offer offer = offerRepository.getById(reservationDto.getOfferId());
 
@@ -85,6 +91,7 @@ public class ReservationService {
     }
 
     public ResponseReservationDto updateReservation(UpdateReservationDto reservationDto) {
+
         Reservation reservationExistingTest = getById(reservationDto.getId());
 
         Reservation.ReservationBuilder reservationBuilder = Reservation.builder();

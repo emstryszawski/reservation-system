@@ -26,11 +26,14 @@ public class UserService implements UserDetailsService {
 
     private final RoleRepository roleRepository;
 
+    private final AuthService authService;
+
     private final PasswordEncoder encoder;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, AuthService authService, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.authService = authService;
         this.encoder = encoder;
     }
 
@@ -48,14 +51,17 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public List<ProfileResponse> getAllUsers() {
+    public List<ProfileResponse> getAllUsers() throws ResponseStatusException{
+        if(!authService.isAdminLoggedIn())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+
         List<ProfileResponse> profiles = new ArrayList<ProfileResponse>();
         userRepository.findAll().forEach( (n) -> profiles.add(userToResponse(n)));
 
         return profiles;
     }
 
-    public SignupResponse createUser(SignupRequest request) {
+    public SignupResponse createUser(SignupRequest request) throws ResponseStatusException{
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: Username is already taken!");
         }
@@ -82,7 +88,11 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public UpdateResponse updateUser(UpdateRequest updatedProfile) {
+    public UpdateResponse updateUser(UpdateRequest updatedProfile) throws ResponseStatusException{
+        if(!authService.isAdminLoggedIn())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+
+
         Optional<User> optionalUser = userRepository.findById(updatedProfile.getId());
         User user;
         if(optionalUser.isPresent())
@@ -110,12 +120,15 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public ProfileResponse getById(Long id) {
+    public ProfileResponse getById(Long id) throws ResponseStatusException{
 
         return userToResponse(userRepository.getById(id));
     }
 
     public ProfileResponse block(Long id) {
+        if(!authService.isAdminLoggedIn())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+
         User user = userRepository.getById(id);
 
         user.setBlocked(true);
@@ -126,6 +139,9 @@ public class UserService implements UserDetailsService {
     }
 
     public ProfileResponse unblock(Long id) {
+        if(!authService.isAdminLoggedIn())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+
         User user = userRepository.getById(id);
 
         user.setBlocked(false);
@@ -136,6 +152,9 @@ public class UserService implements UserDetailsService {
     }
 
     public DeleteResponse delete(Long id) {
+        if(!authService.isAdminLoggedIn())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+
         Optional<User> optionalUser = userRepository.findById(id);
         User user;
         if(optionalUser.isPresent())
