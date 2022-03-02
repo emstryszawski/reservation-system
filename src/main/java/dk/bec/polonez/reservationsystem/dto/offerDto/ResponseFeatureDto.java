@@ -7,6 +7,8 @@ import lombok.Data;
 @Builder
 public class ResponseFeatureDto {
 
+    private long id;
+
     private String name;
 
     private String description;

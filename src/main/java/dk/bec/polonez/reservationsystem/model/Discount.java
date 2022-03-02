@@ -1,11 +1,18 @@
 package dk.bec.polonez.reservationsystem.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Discount {
 
     @Id
@@ -16,14 +23,14 @@ public class Discount {
 
     private String code;
 
-    private int value;
+    private long valueInPercentage;
 
     @ManyToOne
     @JoinColumn
     private Offer offer;
 
-    private long dateFrom;
+    private LocalDate dateFrom;
 
-    private long dateTo;
+    private LocalDate dateTo;
 
 }

@@ -33,4 +33,16 @@ public class FeatureController {
     public ResponseFeatureDto addFeature(@RequestBody CreateFeatureDto featureDto) {
         return featureService.addFeature(featureDto);
     }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean deleteFeature(@PathVariable long id){
+        return featureService.deleteFeature(id);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseFeatureDto updateFeature(@RequestBody ResponseFeatureDto featureDto) {
+        return featureService.updateFeature(featureDto);
+    }
 }
