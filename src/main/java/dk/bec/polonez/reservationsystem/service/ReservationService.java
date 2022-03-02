@@ -67,7 +67,7 @@ public class ReservationService {
 
         final List<Reservation> reservations = new ArrayList<>();
 
-        if(authService.isPoLoggedIn())
+        if(authService.isPlaceOwnerLoggedIn())
             offerRepository.getAllByOwner(currentUser)
                     .forEach((reservation) -> reservations.addAll(reservationRepository.findByOffer(reservation)));
         else
@@ -122,7 +122,7 @@ public class ReservationService {
 
 
     public ResponseReservationDto addReservation(CreateReservationDto reservationDto) {
-        if(authService.isPoLoggedIn())
+        if(authService.isPlaceOwnerLoggedIn())
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
         User user = userRepository.getById(reservationDto.getUserId().getId());

@@ -21,7 +21,7 @@ public class AuthService {
         return getCurrentUser().getRole().getName().equals("PLACE_OWNER");
     }
 
-    private User getCurrentUser() {
+    public User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
                 .orElseThrow(UserForbiddenException::new);
