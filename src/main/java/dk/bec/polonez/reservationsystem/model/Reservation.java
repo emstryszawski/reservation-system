@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -33,4 +35,10 @@ public class Reservation {
     @ManyToOne
     @JoinColumn
     private Offer offer;
+
+    @Override
+    public String toString() {
+        // example info
+        return offer.getName() + ", w dniu" + new Date(dateFrom) + ", nr " + id;
+    }
 }

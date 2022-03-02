@@ -1,5 +1,7 @@
 package dk.bec.polonez.reservationsystem.service;
 
+import dk.bec.polonez.reservationsystem.dto.notification.ReservationConfirmationInput;
+import dk.bec.polonez.reservationsystem.dto.notification.ReservationStatusNotificationInput;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
@@ -9,6 +11,7 @@ import dk.bec.polonez.reservationsystem.model.User;
 import dk.bec.polonez.reservationsystem.repository.OfferRepository;
 import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
@@ -25,12 +29,7 @@ public class ReservationService {
 
     private final OfferRepository offerRepository;
 
-
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository) {
-        this.reservationRepository = reservationRepository;
-        this.userRepository = userRepository;
-        this.offerRepository = offerRepository;
-    }
+    private final MailService mailService;
 
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
@@ -62,6 +61,13 @@ public class ReservationService {
         Reservation savedReservation = reservationRepository.save(reservation);
         ResponseReservationDto.ResponseReservationDtoBuilder response = ResponseReservationDto.builder();
 
+        String email = savedReservation.getUser().getEmail();
+        ReservationConfirmationInput input = ReservationConfirmationInput.builder()
+                .username(savedReservation.getUser().getUsername())
+                .reservationInfo(savedReservation.toString())
+                .build();
+        mailService.sendReservationConfirmation(email, input);
+
         return response
                 .id(savedReservation.getId())
                 .createdAt(savedReservation.getCreatedAt())
@@ -74,7 +80,7 @@ public class ReservationService {
     }
 
     public ResponseReservationDto updateReservation(UpdateReservationDto reservationDto) {
-        Reservation reservationExistingTest = getById(reservationDto.getId());
+        Reservation existingReservation = getById(reservationDto.getId());
 
         Reservation.ReservationBuilder reservationBuilder = Reservation.builder();
 
@@ -88,6 +94,17 @@ public class ReservationService {
         Reservation updatedReservation = reservationRepository.save(reservation);
 
         ResponseReservationDto.ResponseReservationDtoBuilder response = ResponseReservationDto.builder();
+
+        if (!existingReservation.getStatus().equals(updatedReservation.getStatus())) {
+            String email = updatedReservation.getUser().getEmail();
+            ReservationStatusNotificationInput input = ReservationStatusNotificationInput.builder()
+                    .username(updatedReservation.getUser().getUsername())
+                    .reservationStatus(reservation.getStatus())
+                    .reservationInfo(reservation.toString())
+                    .build();
+            input.setReservationStatus(updatedReservation.getStatus());
+            mailService.sendReservationStatusNotification(email, input);
+        }
 
         return response
                 .id(updatedReservation.getId())
