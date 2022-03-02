@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/discount/")
+@RequestMapping("/api/discounts/")
 public class DiscountController {
     private final DiscountService discountService;
 
@@ -43,7 +43,7 @@ public class DiscountController {
         return discountService.updateDiscount(id, discountDto);
     }
 
-    @PostMapping("{id}")
+    @PostMapping
     public DiscountDto addDiscount(@RequestBody CreateDiscountDto discountDto) {
         return discountService.addDiscount(discountDto);
     }
