@@ -2,32 +2,28 @@ package dk.bec.polonez.reservationsystem.service;
 
 import dk.bec.polonez.reservationsystem.model.User;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
-import org.springframework.http.HttpStatus;
+import dk.bec.polonez.reservationsystem.service.exception.UserForbiddenException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
-
-    public AuthService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public boolean isAdminLoggedIn() {
         return getCurrentUser().getRole().getName().equals("SYS_ADMIN");
     }
 
-    public boolean isPoLoggedIn() {
+    public boolean isPlaceOwnerLoggedIn() {
         return getCurrentUser().getRole().getName().equals("PLACE_OWNER");
     }
 
-    public User getCurrentUser() {
+    private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+                .orElseThrow(UserForbiddenException::new);
     }
-
 }
