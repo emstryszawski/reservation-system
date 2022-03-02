@@ -16,6 +16,6 @@ public class CreateReservationDto {
     private Long dateFrom;
     private Long dateTo;
     private String status;
-    private ReservationUserDto userId;
-    private OfferDto offerId;
+    private Long userId;
+    private Long offerId;
 }

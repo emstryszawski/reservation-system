@@ -11,6 +11,7 @@ import dk.bec.polonez.reservationsystem.repository.OfferRepository;
 import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,6 +41,16 @@ public class ReservationService {
         this.offerRepository = offerRepository;
         this.authService = authService;
         this.modelMapper = new ModelMapper();
+
+        PropertyMap<Reservation, ResponseReservationDto> responseReservationMap = new PropertyMap<Reservation, ResponseReservationDto>() {
+            @Override
+            protected void configure() {
+                map().setOfferId(source.getOffer().getId());
+                map().setUserId(source.getUser().getId());
+            }
+        };
+
+        modelMapper.addMappings(responseReservationMap);
     }
 
     public ArrayList<ResponseReservationDto> getAll(Boolean sortedByDate) throws ResponseStatusException{
@@ -121,12 +132,12 @@ public class ReservationService {
 
 
 
-    public ResponseReservationDto addReservation(CreateReservationDto reservationDto) {
+    public ResponseReservationDto addReservation(CreateReservationDto reservationDto) throws ResponseStatusException{
         if(authService.isPlaceOwnerLoggedIn())
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
-        User user = userRepository.getById(reservationDto.getUserId().getId());
-        Offer offer = offerRepository.getById(reservationDto.getOfferId().getId());
+        User user = userRepository.getById(reservationDto.getUserId());
+        Offer offer = offerRepository.getById(reservationDto.getOfferId());
 
         Reservation.ReservationBuilder reservationBuilder = Reservation.builder();
 
@@ -153,22 +164,25 @@ public class ReservationService {
                 .build();
     }
 
-    public ResponseReservationDto updateReservation(UpdateReservationDto reservationDto) {
+    public ResponseReservationDto updateReservation(UpdateReservationDto reservationDto) throws ResponseStatusException{
 
         //TODO: I can edit only My reservation (if ia m an owner or user on the reservation + admin can edit everything)
 
-        Reservation reservationExistingTest = reservationRepository.getById(reservationDto.getId());
+        Reservation existingReservation = reservationRepository.getById(reservationDto.getId());
 
         Reservation.ReservationBuilder reservationBuilder = Reservation.builder();
 
-        Reservation reservation = reservationBuilder
+        Reservation updatedReservation = reservationBuilder
                 .id(reservationDto.getId())
                 .dateFrom(reservationDto.getDateFrom())
                 .dateTo(reservationDto.getDateTo())
                 .status(reservationDto.getStatus())
+                .createdAt(existingReservation.getCreatedAt())
+                .offer(existingReservation.getOffer())
+                .user(existingReservation.getUser())
                 .build();
 
-        Reservation updatedReservation = reservationRepository.save(reservation);
+        reservationRepository.save(updatedReservation);
 
         ResponseReservationDto.ResponseReservationDtoBuilder response = ResponseReservationDto.builder();
 
