@@ -1,7 +1,7 @@
 package dk.bec.polonez.reservationsystem.service;
 
 import dk.bec.polonez.reservationsystem.dto.feature.CreateFeatureDto;
-import dk.bec.polonez.reservationsystem.dto.feature.FeatureDto;
+import dk.bec.polonez.reservationsystem.dto.feature.ResponseFeatureDto;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.repository.FeatureRepository;
 import org.springframework.stereotype.Service;
@@ -22,34 +22,34 @@ public class FeatureService {
         this.modelMapper = new ModelMapper();
     }
 
-    public List<FeatureDto> getAll() {
+    public List<ResponseFeatureDto> getAll() {
         List<Feature> features = featureRepository.findAll();
         return features.stream()
-                .map(feature -> modelMapper.map(feature, FeatureDto.class))
+                .map(feature -> modelMapper.map(feature, ResponseFeatureDto.class))
                 .collect(Collectors.toList());
     }
 
-    public FeatureDto getFeatureById(long id) {
+    public ResponseFeatureDto getFeatureById(long id) {
         Feature feature = featureRepository.getById(id);
-        return modelMapper.map(feature, FeatureDto.class);
+        return modelMapper.map(feature, ResponseFeatureDto.class);
     }
 
-    public FeatureDto addFeature(CreateFeatureDto featureDto) {
+    public ResponseFeatureDto addFeature(CreateFeatureDto featureDto) {
         Feature feature = modelMapper.map(featureDto, Feature.class);
         Feature savedFeature = featureRepository.save(feature);
-        return modelMapper.map(savedFeature, FeatureDto.class);
+        return modelMapper.map(savedFeature, ResponseFeatureDto.class);
     }
 
-    public FeatureDto updateFeature(CreateFeatureDto featureDto, long id) {
+    public ResponseFeatureDto updateFeature(CreateFeatureDto featureDto, long id) {
         Feature feature = featureRepository.getById(id);
         modelMapper.map(featureDto, feature);
         Feature updatedFeature = featureRepository.save(feature);
-        return modelMapper.map(updatedFeature, FeatureDto.class);
+        return modelMapper.map(updatedFeature, ResponseFeatureDto.class);
     }
 
-    public FeatureDto deleteFeatureById(long id) {
+    public ResponseFeatureDto deleteFeatureById(long id) {
         Feature deletedFeature = featureRepository.getById(id);
         featureRepository.deleteById(id);
-        return modelMapper.map(deletedFeature, FeatureDto.class);
+        return modelMapper.map(deletedFeature, ResponseFeatureDto.class);
     }
 }
