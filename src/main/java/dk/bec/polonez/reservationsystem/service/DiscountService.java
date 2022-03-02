@@ -1,7 +1,10 @@
 package dk.bec.polonez.reservationsystem.service;
 
+import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseDiscountDto;
 import dk.bec.polonez.reservationsystem.model.Discount;
-import dk.bec.polonez.reservationsystem.dto.DiscountDto;
+import dk.bec.polonez.reservationsystem.dto.offerDto.CreateDiscountDto;
+import dk.bec.polonez.reservationsystem.model.Offer;
+import dk.bec.polonez.reservationsystem.model.Reservation;
 import dk.bec.polonez.reservationsystem.repository.DiscountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,38 +18,92 @@ import java.util.Optional;
 public class DiscountService {
 
     private final DiscountRepository discountRepository;
-    @Autowired
-    public DiscountService(DiscountRepository discountRepository) {
+
+    private final OfferService offerService;
+
+    public DiscountService(DiscountRepository discountRepository, OfferService offerService) {
         this.discountRepository = discountRepository;
+        this.offerService = offerService;
     }
 
-    public int getByCode(String code){
-        return discountRepository.getByCode(code);
+    public Discount getByCode(String code) {
+        return discountRepository.findDiscountByCode(code);
     }
 
-    public Discount findById(int id){
+    public Discount getById(long id) {
         Optional<Discount> optionalDiscount = discountRepository.findById(id);
         return optionalDiscount.
-                orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
+                orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    public List<Discount> getAll(){
+    public List<Discount> getAll() {
         return discountRepository.findAll();
     }
 
-    public void deleteDiscount(int id){
+    public boolean deleteDiscount(long id) {
         discountRepository.deleteById(id);
+        return true;
     }
 
-    public void updateDiscount(int id, DiscountDto updateDiscount){
-        Discount discountToUpdate = discountRepository.getById(id);
+    public ResponseDiscountDto updateDiscount(ResponseDiscountDto discountDto) {
+        Discount discountExistingTest = getById(discountDto.getId());
 
-        discountToUpdate.setCode(updateDiscount.getCode());
-        discountToUpdate.setDateFrom(updateDiscount.getDateFrom());
-        discountToUpdate.setDateTo(updateDiscount.getDateTo());
-        discountToUpdate.setName(updateDiscount.getName());
+        Offer offer = offerService.getById(discountDto.getOfferId());
+        Discount.DiscountBuilder discountBuilder = Discount.builder();
 
-        discountRepository.save(discountToUpdate);
+        Discount discount = discountBuilder
+                .id(discountDto.getId())
+                .dateFrom(discountDto.getDateFrom())
+                .dateTo(discountDto.getDateTo())
+                .code(discountDto.getCode())
+                .name(discountDto.getName())
+                .valueInPercentage(discountDto.getValueInPercentage())
+                .offer(offer)
+                .build();
+
+        Discount updatedDiscount = discountRepository.save(discount);
+
+        ResponseDiscountDto.ResponseDiscountDtoBuilder response = ResponseDiscountDto.builder();
+
+        return response
+                .id(updatedDiscount.getId())
+                .dateFrom(updatedDiscount.getDateFrom())
+                .dateTo(updatedDiscount.getDateTo())
+                .code(updatedDiscount.getCode())
+                .name(updatedDiscount.getName())
+                .valueInPercentage(updatedDiscount.getValueInPercentage())
+                .offerId(updatedDiscount.getOffer().getId())
+                .build();
+
+    }
+
+
+    public ResponseDiscountDto addDiscount(CreateDiscountDto discountDto) {
+        Offer offer = offerService.getById(discountDto.getOfferId());
+
+        Discount.DiscountBuilder discountBuilder = Discount.builder();
+
+        Discount discount = discountBuilder
+                .dateFrom(discountDto.getDateFrom())
+                .dateTo(discountDto.getDateTo())
+                .code(discountDto.getCode())
+                .name(discountDto.getName())
+                .valueInPercentage(discountDto.getValueInPercentage())
+                .offer(offer)
+                .build();
+
+        Discount savedDiscount = discountRepository.save(discount);
+        ResponseDiscountDto.ResponseDiscountDtoBuilder response = ResponseDiscountDto.builder();
+
+        return response
+                .id(savedDiscount.getId())
+                .code(savedDiscount.getCode())
+                .name(savedDiscount.getName())
+                .valueInPercentage(savedDiscount.getValueInPercentage())
+                .offerId(savedDiscount.getOffer().getId())
+                .dateFrom(savedDiscount.getDateFrom())
+                .dateTo(savedDiscount.getDateTo())
+                .build();
     }
 
 }
