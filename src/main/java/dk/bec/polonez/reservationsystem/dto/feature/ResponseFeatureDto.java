@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeatureDto {
+public class ResponseFeatureDto {
 
     private long id;
 
