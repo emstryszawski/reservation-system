@@ -7,6 +7,7 @@ import dk.bec.polonez.reservationsystem.repository.FeatureRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +17,11 @@ public class FeatureService {
 
     private final FeatureRepository featureRepository;
 
+    private final ModelMapper modelMapper;
+
     public FeatureService(FeatureRepository featureRepository) {
         this.featureRepository = featureRepository;
+        this.modelMapper = new ModelMapper();
     }
 
     public List<Feature> getAll() {
@@ -30,44 +34,21 @@ public class FeatureService {
     }
 
     public ResponseFeatureDto addFeature(CreateFeatureDto featureDto) {
-        Feature.FeatureBuilder builder = Feature.builder();
-        Feature feature = builder
-                .name(featureDto.getName())
-                .description(featureDto.getDescription())
-                .build();
+        Feature feature = modelMapper.map(featureDto, Feature.class);
         Feature savedFeature = featureRepository.save(feature);
-        ResponseFeatureDto.ResponseFeatureDtoBuilder response = ResponseFeatureDto.builder();
-        return response
-                .id(savedFeature.getId())
-                .name(savedFeature.getName())
-                .description(savedFeature.getDescription())
-                .build();
+        return modelMapper.map(savedFeature,ResponseFeatureDto.class);
     }
 
     public ResponseFeatureDto updateFeature(CreateFeatureDto featureDto, long id) {
-        Feature.FeatureBuilder builder = Feature.builder();
-        Feature feature = builder
-                .id(id)
-                .name(featureDto.getName())
-                .description(featureDto.getDescription())
-                .build();
-        Feature savedFeature = featureRepository.save(feature);
-        ResponseFeatureDto.ResponseFeatureDtoBuilder response = ResponseFeatureDto.builder();
-        return response
-                .id(savedFeature.getId())
-                .name(savedFeature.getName())
-                .description(savedFeature.getDescription())
-                .build();
+        Feature feature = featureRepository.getById(id);
+        modelMapper.map(featureDto, feature);
+        Feature updatedFeature = featureRepository.save(feature);
+        return modelMapper.map(updatedFeature,ResponseFeatureDto.class);
     }
 
     public ResponseFeatureDto deleteFeatureById(long id) {
         Feature deletedFeature = featureRepository.getById(id);
         featureRepository.deleteById(id);
-        ResponseFeatureDto.ResponseFeatureDtoBuilder response = ResponseFeatureDto.builder();
-        return response
-                .id(deletedFeature.getId())
-                .name(deletedFeature.getName())
-                .description(deletedFeature.getDescription())
-                .build();
+        return  modelMapper.map(deletedFeature, ResponseFeatureDto.class);
     }
 }
