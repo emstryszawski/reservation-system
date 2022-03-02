@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Discount {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
