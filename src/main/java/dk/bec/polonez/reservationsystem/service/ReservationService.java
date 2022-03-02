@@ -2,6 +2,7 @@ package dk.bec.polonez.reservationsystem.service;
 
 import dk.bec.polonez.reservationsystem.dto.notification.ReservationConfirmationInput;
 import dk.bec.polonez.reservationsystem.dto.notification.ReservationStatusNotificationInput;
+import dk.bec.polonez.reservationsystem.dto.notification.UpcomingEventsNotificationInput;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
@@ -13,11 +14,13 @@ import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +44,6 @@ public class ReservationService {
         return optionalReservation
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
-
 
     public ResponseReservationDto addReservation(CreateReservationDto reservationDto) {
         User user = userRepository.getById(reservationDto.getUserId());
@@ -120,6 +122,25 @@ public class ReservationService {
     public boolean deleteReservation(Long id) {
         reservationRepository.deleteById(id);
         return true;
+    }
+
+    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+    public void notifyAboutUpcomingEvents() {
+        long timestamp = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000;
+        List<Reservation> upcomingReservations = reservationRepository.findAllByDateFrom(timestamp);
+
+        Map<User, List<Reservation>> userReservations = upcomingReservations.stream()
+                .collect(Collectors.groupingBy(Reservation::getUser));
+
+        userReservations.forEach((user, reservations) -> {
+            UpcomingEventsNotificationInput input = UpcomingEventsNotificationInput.builder()
+                    .username(user.getUsername())
+                    .upcomingReservationsInfo(reservations.stream()
+                            .map(Reservation::toString)
+                            .collect(Collectors.toList()))
+                    .build();
+            mailService.sendUpcomingEventsNotification(user.getEmail(), input);
+        });
     }
 
 }
