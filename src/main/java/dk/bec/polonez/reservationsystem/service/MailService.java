@@ -1,8 +1,8 @@
 package dk.bec.polonez.reservationsystem.service;
 
-import dk.bec.polonez.reservationsystem.dto.notificationDto.ReservationConfirmationInput;
-import dk.bec.polonez.reservationsystem.dto.notificationDto.ReservationStatusNotificationInput;
-import dk.bec.polonez.reservationsystem.dto.notificationDto.UpcomingEventsNotificationInput;
+import dk.bec.polonez.reservationsystem.dto.notification.ReservationConfirmationInput;
+import dk.bec.polonez.reservationsystem.dto.notification.ReservationStatusNotificationInput;
+import dk.bec.polonez.reservationsystem.dto.notification.UpcomingEventsNotificationInput;
 import dk.bec.polonez.reservationsystem.model.NotificationTemplate;
 import dk.bec.polonez.reservationsystem.repository.NotificationTemplateRepository;
 import lombok.RequiredArgsConstructor;
