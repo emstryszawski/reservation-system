@@ -23,9 +23,9 @@ public class DiscountDto {
 
     private long valueInPercentage;
 
-    private LocalDate dateFrom;
+    private long dateFrom;
 
-    private LocalDate dateTo;
+    private long dateTo;
 
     private OfferDto offer;
 }

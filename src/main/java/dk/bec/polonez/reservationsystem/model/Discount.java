@@ -29,8 +29,8 @@ public class Discount {
     @JoinColumn
     private Offer offer;
 
-    private LocalDate dateFrom;
+    private long dateFrom;
 
-    private LocalDate dateTo;
+    private long dateTo;
 
 }
