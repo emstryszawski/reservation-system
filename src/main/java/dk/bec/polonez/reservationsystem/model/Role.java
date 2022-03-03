@@ -1,6 +1,7 @@
 package dk.bec.polonez.reservationsystem.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,4 +30,27 @@ public class Role {
     private boolean readMyReservations;
 
     private boolean crudReservation;
+
+    /*  Reservation */
+
+    @Accessors(fluent = true)
+    private boolean hasReservationMineOnlyPrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasReservationReadPrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasReservationCreatePrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasReservationDeletePrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasReservationUpdatePrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasReservationMyOffersPrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasReservationCancelPrivilege;
 }

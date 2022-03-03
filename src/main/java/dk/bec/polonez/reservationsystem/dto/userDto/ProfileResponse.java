@@ -21,5 +21,5 @@ public class ProfileResponse {
 
     private String roleName;
 
-    private boolean isBlocked;
+    private boolean blocked;
 }

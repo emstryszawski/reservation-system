@@ -93,12 +93,8 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
 
-        Optional<User> optionalUser = userRepository.findById(updatedProfile.getId());
-        User user;
-        if(optionalUser.isPresent())
-            user = optionalUser.get();
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: User not found");
+        User user = userRepository.findById(updatedProfile.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: User not found"));
 
         user.setUsername(updatedProfile.getUsername());
         user.setEmail(updatedProfile.getEmail());
@@ -155,12 +151,8 @@ public class UserService implements UserDetailsService {
         if(!authService.isAdminLoggedIn())
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
-        Optional<User> optionalUser = userRepository.findById(id);
-        User user;
-        if(optionalUser.isPresent())
-            user = optionalUser.get();
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: User not found");
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: User not found"));
 
         userRepository.delete(user);
 
@@ -178,7 +170,7 @@ public class UserService implements UserDetailsService {
                 .name(user.getName())
                 .email(user.getEmail())
                 .roleName(user.getRole().getName())
-                .isBlocked(user.isBlocked())
+                .blocked(user.isBlocked())
                 .build();
     }
 

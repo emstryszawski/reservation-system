@@ -16,17 +16,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("signup")
+    @PostMapping()
     public SignupResponse registerUser(@RequestBody SignupRequest signUpRequest) {
         return userService.createUser(signUpRequest);
     }
 
-    @PutMapping("update")
+    @PutMapping()
     public UpdateResponse updateUser(@RequestBody UpdateRequest updateRequest) {
         return userService.updateUser(updateRequest);
     }
 
-    @GetMapping("all")
+    @GetMapping()
     public List<ProfileResponse> getAll() {
         return userService.getAllUsers();
     }

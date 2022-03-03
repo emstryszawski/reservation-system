@@ -4,11 +4,13 @@ package dk.bec.polonez.reservationsystem.controller;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
+import dk.bec.polonez.reservationsystem.model.Reservation;
 import dk.bec.polonez.reservationsystem.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -22,12 +24,17 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<ResponseReservationDto> getAllReservations() {
-        return reservationService.getAll(false);
+    public List<ResponseReservationDto> getAllReservations(@RequestParam boolean sortedByCreationDate) {
+        List<ResponseReservationDto> reservations = reservationService.getAll();
+
+        if(sortedByCreationDate && !reservations.isEmpty())
+            reservations.sort(Comparator.comparingLong(ResponseReservationDto::getCreatedAt));
+
+        return reservations;
     }
 
     @GetMapping("{id}")
-    public ResponseReservationDto getReservationById(@PathVariable long id) {
+    public ResponseReservationDto getReservationByReservationId(@PathVariable long id) {
         return reservationService.getById(id);
     }
 
@@ -49,18 +56,4 @@ public class ReservationController {
         return reservationService.updateReservation(reservationDto);
     }
 
-    @GetMapping("mine")
-    public List<ResponseReservationDto> getAllMyReservations() {
-        return reservationService.getAllMine(false);
-    }
-
-    @GetMapping("mineSorted")
-    public List<ResponseReservationDto> getAllMyReservationsSorted() {
-        return reservationService.getAllMine(true);
-    }
-
-    @GetMapping("sortedByDate")
-    public ArrayList<ResponseReservationDto> getAllReservationsSortedByDate() {
-        return reservationService.getAll(true);
-    }
 }

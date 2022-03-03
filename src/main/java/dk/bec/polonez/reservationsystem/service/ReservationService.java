@@ -3,10 +3,7 @@ package dk.bec.polonez.reservationsystem.service;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
-import dk.bec.polonez.reservationsystem.model.Offer;
-import dk.bec.polonez.reservationsystem.model.Reservation;
-import dk.bec.polonez.reservationsystem.model.ReservationStatus;
-import dk.bec.polonez.reservationsystem.model.User;
+import dk.bec.polonez.reservationsystem.model.*;
 import dk.bec.polonez.reservationsystem.repository.OfferRepository;
 import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
@@ -32,9 +29,6 @@ public class ReservationService {
 
     private final ModelMapper modelMapper;
 
-    //TODO: check if reservation collides with other ones on that offer during addition
-
-
     public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository, AuthService authService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
@@ -53,87 +47,46 @@ public class ReservationService {
         modelMapper.addMappings(responseReservationMap);
     }
 
-    public ArrayList<ResponseReservationDto> getAll(Boolean sortedByDate) throws ResponseStatusException{
-        // Only for Admin - all reservations in the system
-        if(!authService.isAdminLoggedIn())
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: You don't have a permission to see it!");
-
-        List<Reservation> reservations = reservationRepository.findAll();
-
-        if(reservations.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: There are no reservations");
-
-        if(sortedByDate)
-            reservations.sort(Comparator.comparingLong(Reservation::getCreatedAt));
-
-        return reservations.stream()
-                .map(reservation -> modelMapper.map(reservation, ResponseReservationDto.class))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    //TODO: Get all my reservations DONE
-
-    public ArrayList<ResponseReservationDto> getAllMine(Boolean sortedByDate) throws ResponseStatusException {
+    public List<ResponseReservationDto> getAll() throws ResponseStatusException {
         User currentUser = authService.getCurrentUser();
+        Role currentRole = currentUser.getRole();
 
-        final List<Reservation> reservations = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
 
-        if(authService.isPlaceOwnerLoggedIn())
-            offerRepository.getAllByOwner(currentUser)
-                    .forEach((reservation) -> reservations.addAll(reservationRepository.findByOffer(reservation)));
-        else
-            reservations.addAll(reservationRepository.findByUser(currentUser));
+        if (currentRole.hasReservationReadPrivilege() && !currentRole.hasReservationMineOnlyPrivilege() && !currentRole.hasReservationMyOffersPrivilege())
+            reservations = reservationRepository.findAll();
 
-        if(reservations.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: There are no reservations");
+        if (currentRole.hasReservationReadPrivilege() && currentRole.hasReservationMineOnlyPrivilege())
+            reservations = reservationRepository.findByUser(currentUser);
 
-        if(sortedByDate)
-            reservations.sort(Comparator.comparingLong(Reservation::getCreatedAt));
-
-        return reservations.stream()
-                .map(reservation -> modelMapper.map(reservation, ResponseReservationDto.class))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-
-    public ArrayList<ResponseReservationDto> getAllMineSortedByDate() {
-
-        User currentUser = authService.getCurrentUser();
-
-        ArrayList<Reservation> reservations = new ArrayList<>(reservationRepository.findByUser(currentUser));
-
-        reservations.sort(Comparator.comparingLong(Reservation::getCreatedAt));
+        if (currentRole.hasReservationReadPrivilege() && currentRole.hasReservationMyOffersPrivilege()) {
+            for (int i = 0; i < offerRepository.getAllByOwner(currentUser).size(); i++) {
+                reservations.addAll(reservationRepository.findByOffer(offerRepository.getAllByOwner(currentUser).get(i)));
+            }
+        }
 
         return reservations.stream()
                 .map(reservation -> modelMapper.map(reservation, ResponseReservationDto.class))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<ResponseReservationDto> getAllByUserId(Long id) {
-
-        List<Reservation> reservations = reservationRepository.findByUser(userRepository.getById(id));
-
-        return reservations.stream()
-                .map(reservation -> modelMapper.map(reservation, ResponseReservationDto.class))
-                .collect(Collectors.toList());
-    }
-
-
-    public ResponseReservationDto getById(long id) throws ResponseStatusException{
+    public ResponseReservationDto getById(long id) throws ResponseStatusException {
         Optional<Reservation> optionalReservation = reservationRepository.findById(id);
+        User currentUser = authService.getCurrentUser();
+        Role currentRole = currentUser.getRole();
 
-        //TODO: if the reservation is not mine, I can't see it, unless admin
-
-        if(optionalReservation.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: Reservation with this id is not existing");
+        if (!currentRole.hasReservationReadPrivilege()
+                || optionalReservation.isEmpty()
+                || !(optionalReservation.get().getUser().getId().equals(currentUser.getId())
+                && optionalReservation.get().getOffer().getOwner().getId().equals(currentUser.getId())
+                && authService.isAdminLoggedIn()))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         return modelMapper.map(optionalReservation.get(), ResponseReservationDto.class);
     }
 
-
-
-    public ResponseReservationDto addReservation(CreateReservationDto reservationDto) throws ResponseStatusException{
-        if(authService.isPlaceOwnerLoggedIn())
+    public ResponseReservationDto addReservation(CreateReservationDto reservationDto) throws ResponseStatusException {
+        if (authService.isPlaceOwnerLoggedIn())
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
         User user = userRepository.getById(reservationDto.getUserId());
@@ -150,6 +103,9 @@ public class ReservationService {
                 .offer(offer)
                 .build();
 
+        if (isReservationCollidingWithOtherOnes(reservation))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: This reservation is colliding with others on the same offer!");
+
         Reservation savedReservation = reservationRepository.save(reservation);
         ResponseReservationDto.ResponseReservationDtoBuilder response = ResponseReservationDto.builder();
 
@@ -164,9 +120,12 @@ public class ReservationService {
                 .build();
     }
 
-    public ResponseReservationDto updateReservation(UpdateReservationDto reservationDto) throws ResponseStatusException{
+    public ResponseReservationDto updateReservation(UpdateReservationDto reservationDto) throws ResponseStatusException {
+        User currentUser = authService.getCurrentUser();
+        Role currentRole = currentUser.getRole();
 
-        //TODO: I can edit only My reservation (if ia m an owner or user on the reservation + admin can edit everything)
+        if (!currentRole.hasReservationUpdatePrivilege())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
         Reservation existingReservation = reservationRepository.getById(reservationDto.getId());
 
@@ -182,8 +141,10 @@ public class ReservationService {
                 .user(existingReservation.getUser())
                 .build();
 
-        reservationRepository.save(updatedReservation);
+        if (isReservationCollidingWithOtherOnes(updatedReservation))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: This reservation is colliding with others on the same offer!");
 
+        reservationRepository.save(updatedReservation);
         ResponseReservationDto.ResponseReservationDtoBuilder response = ResponseReservationDto.builder();
 
         return response
@@ -198,21 +159,30 @@ public class ReservationService {
     }
 
     public boolean deleteReservation(Long id) throws ResponseStatusException {
-        //TODO: I can delete only if I am an owner of user of this reservation + admin
+        User currentUser = authService.getCurrentUser();
+        Role currentRole = currentUser.getRole();
 
-        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
-        Reservation reservation;
+        if (!currentRole.hasReservationDeletePrivilege())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
-        if(optionalReservation.isPresent())
-            reservation = optionalReservation.get();
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: This reservation not exist!");
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: This reservation is already approved!"));
 
-        if(!reservation.getStatus().equals(ReservationStatus.PENDING.name()))
+        if (!reservation.getStatus().equals(ReservationStatus.PENDING.name()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: This reservation is already approved!");
 
         reservationRepository.deleteById(id);
         return true;
     }
 
+    private boolean isReservationCollidingWithOtherOnes(Reservation myReservation) {
+        List<Reservation> offerReservations = reservationRepository.findByOffer(myReservation.getOffer());
+
+        for (Reservation otherReservation : offerReservations) {
+            if (myReservation.collides(otherReservation))
+                return true;
+        }
+
+        return false;
+    }
 }
