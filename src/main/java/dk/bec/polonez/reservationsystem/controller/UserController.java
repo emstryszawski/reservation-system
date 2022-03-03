@@ -46,7 +46,7 @@ public class UserController {
         return userService.unblock(id);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public DeleteResponse deleteUser(@PathVariable Long id) {
         return userService.delete(id);
     }

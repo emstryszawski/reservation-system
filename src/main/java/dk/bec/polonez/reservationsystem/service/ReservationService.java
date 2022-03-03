@@ -29,6 +29,8 @@ public class ReservationService {
 
     private final ModelMapper modelMapper;
 
+    //TODO: Cancel reservation
+
     public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository, AuthService authService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
@@ -36,7 +38,7 @@ public class ReservationService {
         this.authService = authService;
         this.modelMapper = new ModelMapper();
 
-        PropertyMap<Reservation, ResponseReservationDto> responseReservationMap = new PropertyMap<Reservation, ResponseReservationDto>() {
+        PropertyMap<Reservation, ResponseReservationDto> responseReservationMap = new PropertyMap<>() {
             @Override
             protected void configure() {
                 map().setOfferId(source.getOffer().getId());
@@ -75,12 +77,16 @@ public class ReservationService {
         User currentUser = authService.getCurrentUser();
         Role currentRole = currentUser.getRole();
 
-        if (!currentRole.hasReservationReadPrivilege()
-                || optionalReservation.isEmpty()
-                || !(optionalReservation.get().getUser().getId().equals(currentUser.getId())
-                && optionalReservation.get().getOffer().getOwner().getId().equals(currentUser.getId())
-                && authService.isAdminLoggedIn()))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if(!currentRole.hasReservationReadPrivilege())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing ReadReservationsPrivilege.");
+
+        if(optionalReservation.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Optional reservation empty");
+
+        if(!(optionalReservation.get().getUser().getId().equals(currentUser.getId())
+                && optionalReservation.get().getOffer().getOwner().getId().equals(currentUser.getId())))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not related");
+
 
         return modelMapper.map(optionalReservation.get(), ResponseReservationDto.class);
     }

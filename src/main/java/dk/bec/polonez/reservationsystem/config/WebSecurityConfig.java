@@ -40,10 +40,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable().authorizeRequests()
 
-                .antMatchers(HttpMethod.POST, LOGIN_URL, SIGN_UP_URL, UPDATE_URL).permitAll()
+                .antMatchers(HttpMethod.POST, LOGIN_URL, UNIVERSAL_URL).permitAll()
+                .antMatchers(HttpMethod.GET, UNIVERSAL_URL).permitAll()
+                .antMatchers(HttpMethod.DELETE, UNIVERSAL_URL).permitAll()
+                .antMatchers(HttpMethod.PUT, UNIVERSAL_URL).permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
-
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), LOGIN_URL))
