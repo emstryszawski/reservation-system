@@ -1,7 +1,5 @@
-package dk.bec.polonez.reservationsystem.controller;
+package dk.bec.polonez.reservationsystem.exception;
 
-import dk.bec.polonez.reservationsystem.exception.AuthenticationException;
-import dk.bec.polonez.reservationsystem.exception.ErrorResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class CustomExceptionHandler extends ResponseEntityExceptionHandler
-{
+public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) ->{
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
 
             String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
@@ -34,9 +31,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleAuthenticationException(AuthenticationException ex) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setStatus(ex.getStatus().toString());
-        errorResponse.setMessage(ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN)
+                .message(ex.getMessage())
+                .build(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(NoAccessToOfferOperationException.class)
+    public ResponseEntity<ErrorResponse> handleNoAccessToOfferOperationException(NoAccessToOfferOperationException ex) {
+        return new ResponseEntity<>(ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN)
+                .message(ex.getMessage())
+                .build(), HttpStatus.FORBIDDEN);
+
     }
 }
