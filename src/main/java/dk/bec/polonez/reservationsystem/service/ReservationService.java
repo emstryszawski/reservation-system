@@ -18,6 +18,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -66,7 +69,7 @@ public class ReservationService {
         String email = savedReservation.getUser().getEmail();
         ReservationConfirmationInput input = ReservationConfirmationInput.builder()
                 .username(savedReservation.getUser().getUsername())
-                .reservationInfo(savedReservation.toString())
+                .reservationInfo(getReservationDetails(savedReservation))
                 .build();
         mailService.sendReservationConfirmation(email, input);
 
@@ -97,12 +100,12 @@ public class ReservationService {
 
         ResponseReservationDto.ResponseReservationDtoBuilder response = ResponseReservationDto.builder();
 
-        if (!existingReservation.getStatus().equals(updatedReservation.getStatus())) {
+        if (hasStatusChanged(existingReservation, updatedReservation)) {
             String email = updatedReservation.getUser().getEmail();
             ReservationStatusNotificationInput input = ReservationStatusNotificationInput.builder()
                     .username(updatedReservation.getUser().getUsername())
                     .reservationStatus(reservation.getStatus())
-                    .reservationInfo(reservation.toString())
+                    .reservationInfo(getReservationDetails(reservation))
                     .build();
             input.setReservationStatus(updatedReservation.getStatus());
             mailService.sendReservationStatusNotification(email, input);
@@ -119,6 +122,14 @@ public class ReservationService {
                 .build();
     }
 
+    private boolean hasStatusChanged(Reservation existing, Reservation updated) {
+        return !existing.getStatus().equals(updated.getStatus());
+    }
+
+    private String getReservationDetails(Reservation reservation) {
+        return reservation.getOffer().getName() + ", " + new Date(reservation.getDateFrom());
+    }
+
     public boolean deleteReservation(Long id) {
         reservationRepository.deleteById(id);
         return true;
@@ -126,7 +137,11 @@ public class ReservationService {
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     public void notifyAboutUpcomingEvents() {
-        long timestamp = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000;
+        long timestamp = LocalDateTime.now()
+                .plusDays(7)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli();
         List<Reservation> upcomingReservations = reservationRepository.findAllByDateFrom(timestamp);
 
         Map<User, List<Reservation>> userReservations = upcomingReservations.stream()
@@ -136,7 +151,7 @@ public class ReservationService {
             UpcomingEventsNotificationInput input = UpcomingEventsNotificationInput.builder()
                     .username(user.getUsername())
                     .upcomingReservationsInfo(reservations.stream()
-                            .map(Reservation::toString)
+                            .map(this::getReservationDetails)
                             .collect(Collectors.toList()))
                     .build();
             mailService.sendUpcomingEventsNotification(user.getEmail(), input);
