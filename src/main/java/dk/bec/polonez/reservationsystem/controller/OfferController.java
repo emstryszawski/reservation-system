@@ -42,12 +42,12 @@ public class OfferController {
     }
 
     @DeleteMapping("{id}")
-    public OfferDto deleteOffer(@PathVariable long id) {
-        return offerService.deleteOffer(id);
+    public ResponseEntity<OfferDto> deleteOffer(@PathVariable long id) {
+        return new ResponseEntity<>(offerService.deleteOffer(id), HttpStatus.OK);
     }
 
-    @PostMapping("{id}/features")
-    public ResponseOfferFeatureDto addFeatureToOffer(@RequestParam long featureId, @PathVariable long offerId) {
-        return offerService.addFeatureToOffer(featureId, offerId);
+    @PostMapping("{offerId}/features")
+    public ResponseEntity<ResponseOfferFeatureDto> addFeatureToOffer(@RequestParam long featureId, @PathVariable long offerId) {
+        return new ResponseEntity<>(offerService.addFeatureToOffer(featureId, offerId), HttpStatus.OK);
     }
 }

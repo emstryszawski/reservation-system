@@ -29,20 +29,19 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<?> handleAuthenticationException(AuthenticationException ex) {
+    @ExceptionHandler({NotFoundObjectException.class})
+    public ResponseEntity<ErrorResponse> handleNotFoundOfferException(RuntimeException ex) {
         return new ResponseEntity<>(ErrorResponse.builder()
-                .status(HttpStatus.FORBIDDEN)
+                .status(HttpStatus.NOT_FOUND)
                 .message(ex.getMessage())
-                .build(), HttpStatus.FORBIDDEN);
+                .build(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(NoAccessToOfferOperationException.class)
-    public ResponseEntity<ErrorResponse> handleNoAccessToOfferOperationException(NoAccessToOfferOperationException ex) {
+    @ExceptionHandler({NoAccessToOfferOperationException.class})
+    public ResponseEntity<ErrorResponse> handleNoAccessToOfferOperationException(RuntimeException ex) {
         return new ResponseEntity<>(ErrorResponse.builder()
                 .status(HttpStatus.FORBIDDEN)
                 .message(ex.getMessage())
                 .build(), HttpStatus.FORBIDDEN);
-
     }
 }
