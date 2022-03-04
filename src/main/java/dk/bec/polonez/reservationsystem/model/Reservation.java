@@ -39,16 +39,10 @@ public class Reservation {
 
         Reservation currentReservation = this;
 
-        if(currentReservation.getDateTo() > otherReservation.getDateFrom() && currentReservation.getDateTo() < otherReservation.getDateTo())
+        if(currentReservation.getDateTo() >= otherReservation.getDateFrom() && currentReservation.getDateTo() <= otherReservation.getDateTo())
             return true;
 
-        if(currentReservation.getDateFrom() < otherReservation.getDateFrom() && currentReservation.getDateTo() < otherReservation.getDateTo())
-            return true;
-
-        if(otherReservation.getDateTo() > currentReservation.getDateFrom() && otherReservation.getDateTo() < currentReservation.getDateTo())
-            return true;
-
-        if(otherReservation.getDateFrom() < currentReservation.getDateFrom() && otherReservation.getDateTo() < currentReservation.getDateTo())
+        if(currentReservation.getDateFrom() >= otherReservation.getDateFrom() && currentReservation.getDateFrom() <= otherReservation.getDateTo())
             return true;
 
         return false;
