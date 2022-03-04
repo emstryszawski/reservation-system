@@ -1,4 +1,4 @@
-package dk.bec.polonez.reservationsystem.dto.reservationDto;
+package dk.bec.polonez.reservationsystem.dto.reservation;
 
 import lombok.Data;
 

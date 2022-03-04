@@ -25,6 +25,12 @@ public class Offer {
     @JoinColumn
     private User owner;
 
+    private double pricePerUnit;
+
+    private OfferDurationUnit durationUnit;
+
+    private int units;
+
     private String description;
 
     @OneToMany
