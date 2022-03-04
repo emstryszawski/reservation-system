@@ -30,8 +30,6 @@ public class UserService implements UserDetailsService {
 
     private final PasswordEncoder encoder;
 
-    //TODO: Blocked user can't do things
-
     public UserService(UserRepository userRepository, RoleRepository roleRepository, AuthService authService, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -54,7 +52,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<ProfileResponse> getAllUsers() throws ResponseStatusException{
-        if(!authService.isAdminLoggedIn())
+        if(!authService.isAdminLoggedIn() || authService.getCurrentUser().isBlocked())
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
         List<ProfileResponse> profiles = new ArrayList<>();
@@ -91,7 +89,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UpdateResponse updateUser(UpdateRequest updatedProfile) throws ResponseStatusException{
-        if(!authService.isAdminLoggedIn())
+        if(!authService.isAdminLoggedIn() || authService.getCurrentUser().isBlocked())
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
 

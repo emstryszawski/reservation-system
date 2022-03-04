@@ -29,8 +29,6 @@ public class ReservationService {
 
     private final ModelMapper modelMapper;
 
-    //TODO: Cancel reservation
-
     public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository, AuthService authService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
