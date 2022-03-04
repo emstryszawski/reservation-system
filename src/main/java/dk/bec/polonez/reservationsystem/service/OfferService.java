@@ -4,7 +4,7 @@ package dk.bec.polonez.reservationsystem.service;
 import dk.bec.polonez.reservationsystem.dto.offerDto.CreateOfferDto;
 import dk.bec.polonez.reservationsystem.dto.offerDto.OfferDto;
 import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseOfferFeatureDto;
-import dk.bec.polonez.reservationsystem.exception.NoAccessToOfferOperationException;
+import dk.bec.polonez.reservationsystem.exception.NoAccessToOperationException;
 import dk.bec.polonez.reservationsystem.exception.NotFoundObjectException;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.model.Offer;
@@ -52,7 +52,7 @@ public class OfferService {
         Role currentUserRole = currentUser.getRole();
 
         if (!currentUserRole.hasOfferCreatePrivilege())
-            throw new NoAccessToOfferOperationException();
+            throw new NoAccessToOperationException();
 
         Offer offer = modelMapper.map(offerDto, Offer.class);
         offer.setOwner(currentUser);
@@ -69,10 +69,10 @@ public class OfferService {
         Role currentUserRole = currentUser.getRole();
 
         if (!currentUserRole.hasOfferUpdatePrivilege())
-            throw new NoAccessToOfferOperationException();
+            throw new NoAccessToOperationException();
 
         if (!offer.getOwner().equals(currentUser) && !currentUserRole.hasOfferUpdateOthersOfferPrivilege())
-            throw new NoAccessToOfferOperationException("You cannot update other Place Owner's offer as a Place Owner, to do that log as an Admin");
+            throw new NoAccessToOperationException("You cannot update other Place Owner's offer as a Place Owner, to do that log as an Admin");
 
         modelMapper.map(offerDto, offer);
         Offer updatedOffer = offerRepository.save(offer);
@@ -88,9 +88,9 @@ public class OfferService {
         Role currentUserRole = currentUser.getRole();
 
         if (!currentUserRole.hasOfferDeletePrivilege())
-            throw new NoAccessToOfferOperationException();
+            throw new NoAccessToOperationException();
         if (!offer.getOwner().equals(currentUser) && !currentUserRole.hasOfferDeleteOthersOfferPrivilege())
-            throw new NoAccessToOfferOperationException("You cannot delete other Place Owner's offer as a Place Owner, to do that log as an Admin");
+            throw new NoAccessToOperationException("You cannot delete other Place Owner's offer as a Place Owner, to do that log as an Admin");
 
         offerRepository.delete(offer);
         return modelMapper.map(offer, OfferDto.class);
@@ -108,9 +108,9 @@ public class OfferService {
         Role currentUserRole = currentUser.getRole();
 
         if (!currentUserRole.hasOfferUpdatePrivilege())
-            throw new NoAccessToOfferOperationException();
+            throw new NoAccessToOperationException();
         if (!offer.getOwner().equals(currentUser) && !currentUserRole.hasOfferDeleteOthersOfferPrivilege)
-            throw new NoAccessToOfferOperationException("You cannot update other Place Owner's offer features as a Place Owner, to do that log as an Admin");
+            throw new NoAccessToOperationException("You cannot update other Place Owner's offer features as a Place Owner, to do that log as an Admin");
 
         List<Feature> features = offer.getFeatures();
         features.add(feature);

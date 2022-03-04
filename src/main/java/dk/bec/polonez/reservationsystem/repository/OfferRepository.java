@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface OfferRepository extends JpaRepository<Offer, Long> {
 
-    public List<Offer> getAllByOwner(User user);
+    List<Offer> getAllByOwner(User user);
 }

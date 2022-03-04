@@ -23,7 +23,7 @@ public class Role {
 
     private String name;
 
-    /** Offer CRUD Privileges */
+    /** Offer Privileges */
     @Accessors(fluent = true)
     private boolean hasOfferCreatePrivilege;
 
@@ -42,7 +42,7 @@ public class Role {
     @Accessors(fluent = true)
     public boolean hasOfferDeleteOthersOfferPrivilege;
 
-    /*  Reservation */
+    /** Reservation Privileges */
 
     @Accessors(fluent = true)
     private boolean hasReservationMineOnlyPrivilege;
@@ -64,4 +64,18 @@ public class Role {
 
     @Accessors(fluent = true)
     private boolean hasReservationCancelPrivilege;
+
+    /** Discount Privileges */
+
+    @Accessors(fluent = true)
+    private boolean hasDiscountCreationPrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasDiscountReadPrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasDiscountDeletePrivilege;
+
+    @Accessors(fluent = true)
+    private boolean hasDiscountUpdatePrivilege;
 }
