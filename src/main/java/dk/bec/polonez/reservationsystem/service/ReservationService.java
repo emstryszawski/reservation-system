@@ -1,5 +1,8 @@
 package dk.bec.polonez.reservationsystem.service;
 
+import dk.bec.polonez.reservationsystem.dto.notification.ReservationConfirmationInput;
+import dk.bec.polonez.reservationsystem.dto.notification.ReservationStatusNotificationInput;
+import dk.bec.polonez.reservationsystem.dto.notification.UpcomingEventsNotificationInput;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
@@ -9,14 +12,20 @@ import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
@@ -24,10 +33,12 @@ public class ReservationService {
     private final UserRepository userRepository;
 
     private final OfferRepository offerRepository;
-
+  
     private final AuthService authService;
 
     private final ModelMapper modelMapper;
+  
+    private final MailService mailService;
 
     //TODO: Cancel reservation
 
@@ -91,10 +102,11 @@ public class ReservationService {
         return modelMapper.map(optionalReservation.get(), ResponseReservationDto.class);
     }
 
+
     public ResponseReservationDto addReservation(CreateReservationDto reservationDto) throws ResponseStatusException {
         if (authService.isPlaceOwnerLoggedIn())
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-
+  
         User user = userRepository.getById(reservationDto.getUserId());
         Offer offer = offerRepository.getById(reservationDto.getOfferId());
 
@@ -115,6 +127,13 @@ public class ReservationService {
         Reservation savedReservation = reservationRepository.save(reservation);
         ResponseReservationDto.ResponseReservationDtoBuilder response = ResponseReservationDto.builder();
 
+        String email = savedReservation.getUser().getEmail();
+        ReservationConfirmationInput input = ReservationConfirmationInput.builder()
+                .username(savedReservation.getUser().getUsername())
+                .reservationInfo(getReservationDetails(savedReservation))
+                .build();
+        mailService.sendReservationConfirmation(email, input);
+
         return response
                 .id(savedReservation.getId())
                 .createdAt(savedReservation.getCreatedAt())
@@ -125,6 +144,7 @@ public class ReservationService {
                 .offerId(savedReservation.getOffer().getId())
                 .build();
     }
+
 
     public ResponseReservationDto updateReservation(UpdateReservationDto reservationDto) throws ResponseStatusException {
         User currentUser = authService.getCurrentUser();
@@ -153,6 +173,17 @@ public class ReservationService {
         reservationRepository.save(updatedReservation);
         ResponseReservationDto.ResponseReservationDtoBuilder response = ResponseReservationDto.builder();
 
+        if (hasStatusChanged(existingReservation, updatedReservation)) {
+            String email = updatedReservation.getUser().getEmail();
+            ReservationStatusNotificationInput input = ReservationStatusNotificationInput.builder()
+                    .username(updatedReservation.getUser().getUsername())
+                    .reservationStatus(reservation.getStatus())
+                    .reservationInfo(getReservationDetails(reservation))
+                    .build();
+            input.setReservationStatus(updatedReservation.getStatus());
+            mailService.sendReservationStatusNotification(email, input);
+        }
+
         return response
                 .id(updatedReservation.getId())
                 .createdAt(updatedReservation.getCreatedAt())
@@ -176,11 +207,19 @@ public class ReservationService {
 
         if (!reservation.getStatus().equals(ReservationStatus.PENDING.name()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: This reservation is already approved!");
-
+      
         reservationRepository.deleteById(id);
         return true;
     }
 
+    private boolean hasStatusChanged(Reservation existing, Reservation updated) {
+        return !existing.getStatus().equals(updated.getStatus());
+    }
+
+    private String getReservationDetails(Reservation reservation) {
+        return reservation.getOffer().getName() + ", " + new Date(reservation.getDateFrom());
+    }
+        
     private boolean isReservationCollidingWithOtherOnes(Reservation myReservation) {
         List<Reservation> offerReservations = reservationRepository.findByOffer(myReservation.getOffer());
 
@@ -191,4 +230,28 @@ public class ReservationService {
 
         return false;
     }
+
+    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+    public void notifyAboutUpcomingEvents() {
+        long timestamp = LocalDateTime.now()
+                .plusDays(7)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli();
+        List<Reservation> upcomingReservations = reservationRepository.findAllByDateFrom(timestamp);
+
+        Map<User, List<Reservation>> userReservations = upcomingReservations.stream()
+                .collect(Collectors.groupingBy(Reservation::getUser));
+
+        userReservations.forEach((user, reservations) -> {
+            UpcomingEventsNotificationInput input = UpcomingEventsNotificationInput.builder()
+                    .username(user.getUsername())
+                    .upcomingReservationsInfo(reservations.stream()
+                            .map(this::getReservationDetails)
+                            .collect(Collectors.toList()))
+                    .build();
+            mailService.sendUpcomingEventsNotification(user.getEmail(), input);
+        });
+    }
+
 }
