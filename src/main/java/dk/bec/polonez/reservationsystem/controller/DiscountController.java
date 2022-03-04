@@ -21,8 +21,8 @@ public class DiscountController {
         this.discountService = discountService;
     }
 
-    @GetMapping
-    public DiscountDto getByCode(@PathVariable String code) {
+    @GetMapping("codes")
+    public DiscountDto getByCode(@RequestParam String code) {
         return discountService.getByCode(code);
     }
 

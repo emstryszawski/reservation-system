@@ -2,7 +2,6 @@
 package dk.bec.polonez.reservationsystem.service;
 
 import dk.bec.polonez.reservationsystem.dto.offerDto.DiscountDto;
-import dk.bec.polonez.reservationsystem.exception.AuthenticationException;
 import dk.bec.polonez.reservationsystem.exception.NoAccessToOperationException;
 import dk.bec.polonez.reservationsystem.exception.NotFoundObjectException;
 import dk.bec.polonez.reservationsystem.model.Discount;
@@ -11,9 +10,7 @@ import dk.bec.polonez.reservationsystem.model.Role;
 import dk.bec.polonez.reservationsystem.model.User;
 import dk.bec.polonez.reservationsystem.repository.DiscountRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,10 +22,12 @@ public class DiscountService {
     private final DiscountRepository discountRepository;
     private final ModelMapper modelMapper;
     private final AuthService authService;
+    private final OfferService offerService;
 
-    public DiscountService(DiscountRepository discountRepository, AuthService authService) {
+    public DiscountService(DiscountRepository discountRepository, AuthService authService, OfferService offerService) {
         this.discountRepository = discountRepository;
         this.authService = authService;
+        this.offerService = offerService;
         this.modelMapper = new ModelMapper();
     }
 
@@ -71,9 +70,14 @@ public class DiscountService {
 
         if(!currentUserRole.hasDiscountDeletePrivilege())
             throw  new NoAccessToOperationException();
+
         Optional<Discount> optionalDiscount  = discountRepository.findById(id);
         Discount discountToDelete = optionalDiscount
                 .orElseThrow(() -> new NotFoundObjectException(Discount.class, id));
+
+        if(!discountToDelete.getOffer().equals(currentUser))
+        throw  new NoAccessToOperationException("You can not delete discounts of other users");
+
         discountRepository.delete(discountToDelete);
         return modelMapper.map(discountToDelete, DiscountDto.class);
 
@@ -89,6 +93,10 @@ public class DiscountService {
         Optional<Discount> optionalDiscount = discountRepository.findById(id);
         Discount discount = optionalDiscount
                 .orElseThrow(() -> new NotFoundObjectException(Discount.class, id));
+
+        if(!discount.getOffer().equals(currentUser))
+            throw  new NoAccessToOperationException("You can not update discounts of other users");
+
         modelMapper.map(discountDto, discount);
         Discount updatedDiscount = discountRepository.save(discount);
         return modelMapper.map(updatedDiscount, DiscountDto.class);
@@ -102,10 +110,13 @@ public class DiscountService {
             throw  new NoAccessToOperationException();
 
         Discount discount = modelMapper.map(discountDto, Discount.class);
+
+        if(!discount.getOffer().equals(currentUser))
+            throw  new NoAccessToOperationException("You can not add discount to another user offer");
+
         Discount savedDiscount = discountRepository.save(discount);
         return modelMapper.map(savedDiscount, DiscountDto.class);
-
-
     }
+
 
 }
