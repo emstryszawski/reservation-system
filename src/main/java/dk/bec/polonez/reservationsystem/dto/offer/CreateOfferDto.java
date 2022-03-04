@@ -15,6 +15,8 @@ public class CreateOfferDto {
     @Size(max = 2000, message = "description cannot be longer than 2000 chars")
     private String description;
 
+    private double pricePerUnit;
+
     private String durationUnit;
 
     private int units;

@@ -37,8 +37,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 .build(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({NoAccessToOperationException.class})
-    public ResponseEntity<ErrorResponse> handleNoAccessToOfferOperationException(RuntimeException ex) {
+    @ExceptionHandler({NoAccessToOperationException.class, UserIsBlockedException.class})
+    public ResponseEntity<ErrorResponse> handleForbiddenExceptions(RuntimeException ex) {
         return new ResponseEntity<>(ErrorResponse.builder()
                 .status(HttpStatus.FORBIDDEN)
                 .message(ex.getMessage())

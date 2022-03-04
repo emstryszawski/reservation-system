@@ -6,6 +6,7 @@ import dk.bec.polonez.reservationsystem.dto.offer.OfferDto;
 import dk.bec.polonez.reservationsystem.dto.offer.ResponseOfferFeatureDto;
 import dk.bec.polonez.reservationsystem.exception.NoAccessToOperationException;
 import dk.bec.polonez.reservationsystem.exception.NotFoundObjectException;
+import dk.bec.polonez.reservationsystem.exception.UserIsBlockedException;
 import dk.bec.polonez.reservationsystem.model.Feature;
 import dk.bec.polonez.reservationsystem.model.Offer;
 import dk.bec.polonez.reservationsystem.model.Role;
@@ -51,6 +52,9 @@ public class OfferService {
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
 
+        if (currentUser.isBlocked())
+            throw new UserIsBlockedException();
+
         if (!currentUserRole.hasOfferCreatePrivilege())
             throw new NoAccessToOperationException();
 
@@ -67,6 +71,9 @@ public class OfferService {
 
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
+
+        if (currentUser.isBlocked())
+            throw new UserIsBlockedException();
 
         if (!currentUserRole.hasOfferUpdatePrivilege())
             throw new NoAccessToOperationException();
@@ -87,8 +94,12 @@ public class OfferService {
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
 
+        if (currentUser.isBlocked())
+            throw new UserIsBlockedException();
+
         if (!currentUserRole.hasOfferDeletePrivilege())
             throw new NoAccessToOperationException();
+
         if (!offer.getOwner().equals(currentUser) && !currentUserRole.hasOfferDeleteOthersOfferPrivilege())
             throw new NoAccessToOperationException("You cannot delete other Place Owner's offer as a Place Owner, to do that log as an Admin");
 
@@ -107,8 +118,12 @@ public class OfferService {
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
 
+        if (currentUser.isBlocked())
+            throw new UserIsBlockedException();
+
         if (!currentUserRole.hasOfferUpdatePrivilege())
             throw new NoAccessToOperationException();
+
         if (!offer.getOwner().equals(currentUser) && !currentUserRole.hasOfferDeleteOthersOfferPrivilege)
             throw new NoAccessToOperationException("You cannot update other Place Owner's offer features as a Place Owner, to do that log as an Admin");
 

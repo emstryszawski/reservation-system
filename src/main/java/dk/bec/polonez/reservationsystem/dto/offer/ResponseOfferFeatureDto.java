@@ -1,5 +1,6 @@
 package dk.bec.polonez.reservationsystem.dto.offer;
 
+import dk.bec.polonez.reservationsystem.dto.feature.ResponseFeatureDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

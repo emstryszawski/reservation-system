@@ -15,7 +15,13 @@ public class OfferDto {
 
     private String name;
 
-    private OfferOwnerDto owner;
-
     private String description;
+
+    private String durationUnit;
+
+    private int units;
+
+    private double pricePerUnit;
+
+    private OfferOwnerDto owner;
 }
