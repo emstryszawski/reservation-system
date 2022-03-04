@@ -1,15 +1,13 @@
 package dk.bec.polonez.reservationsystem.controller;
 
 
-import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
-import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
-import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
-import dk.bec.polonez.reservationsystem.model.Reservation;
+import dk.bec.polonez.reservationsystem.dto.reservation.CreateReservationDto;
+import dk.bec.polonez.reservationsystem.dto.reservation.ResponseReservationDto;
+import dk.bec.polonez.reservationsystem.dto.reservation.UpdateReservationDto;
 import dk.bec.polonez.reservationsystem.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 

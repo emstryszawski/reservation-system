@@ -1,11 +1,11 @@
 
 package dk.bec.polonez.reservationsystem.service;
 
-import dk.bec.polonez.reservationsystem.dto.offerDto.DiscountDto;
+import dk.bec.polonez.reservationsystem.dto.offer.DiscountDto;
 import dk.bec.polonez.reservationsystem.exception.NoAccessToOperationException;
 import dk.bec.polonez.reservationsystem.exception.NotFoundObjectException;
 import dk.bec.polonez.reservationsystem.model.Discount;
-import dk.bec.polonez.reservationsystem.dto.offerDto.CreateDiscountDto;
+import dk.bec.polonez.reservationsystem.dto.offer.CreateDiscountDto;
 import dk.bec.polonez.reservationsystem.model.Role;
 import dk.bec.polonez.reservationsystem.model.User;
 import dk.bec.polonez.reservationsystem.repository.DiscountRepository;

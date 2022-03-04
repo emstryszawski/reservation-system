@@ -1,13 +1,10 @@
-package dk.bec.polonez.reservationsystem.dto.offerDto;
+package dk.bec.polonez.reservationsystem.dto.offer;
 
 
-import dk.bec.polonez.reservationsystem.model.Offer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Data
 @Builder

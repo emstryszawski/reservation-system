@@ -1,11 +1,8 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.dto.offerDto.CreateDiscountDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.DiscountDto;
-import dk.bec.polonez.reservationsystem.model.Discount;
+import dk.bec.polonez.reservationsystem.dto.offer.CreateDiscountDto;
+import dk.bec.polonez.reservationsystem.dto.offer.DiscountDto;
 import dk.bec.polonez.reservationsystem.service.DiscountService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

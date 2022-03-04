@@ -1,9 +1,9 @@
 package dk.bec.polonez.reservationsystem.service;
 
 import dk.bec.polonez.reservationsystem.dto.notification.*;
-import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
-import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
-import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
+import dk.bec.polonez.reservationsystem.dto.reservation.CreateReservationDto;
+import dk.bec.polonez.reservationsystem.dto.reservation.ResponseReservationDto;
+import dk.bec.polonez.reservationsystem.dto.reservation.UpdateReservationDto;
 import dk.bec.polonez.reservationsystem.model.*;
 import dk.bec.polonez.reservationsystem.repository.OfferRepository;
 import dk.bec.polonez.reservationsystem.repository.ReservationRepository;

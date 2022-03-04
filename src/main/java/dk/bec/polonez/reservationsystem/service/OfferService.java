@@ -1,9 +1,9 @@
 package dk.bec.polonez.reservationsystem.service;
 
 
-import dk.bec.polonez.reservationsystem.dto.offerDto.CreateOfferDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.OfferDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseOfferFeatureDto;
+import dk.bec.polonez.reservationsystem.dto.offer.CreateOfferDto;
+import dk.bec.polonez.reservationsystem.dto.offer.OfferDto;
+import dk.bec.polonez.reservationsystem.dto.offer.ResponseOfferFeatureDto;
 import dk.bec.polonez.reservationsystem.exception.NoAccessToOperationException;
 import dk.bec.polonez.reservationsystem.exception.NotFoundObjectException;
 import dk.bec.polonez.reservationsystem.model.Feature;

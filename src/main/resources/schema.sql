@@ -1,4 +1,3 @@
-<<<<<<<<< Temporary merge branch 1
 INSERT INTO ROLE(
     ID,
     NAME,
@@ -24,13 +23,13 @@ INSERT INTO ROLE(
     )
 VALUES
     (1, 'USER',        false, true,  false, false, false, false,
-                       true,  true,  true,  false, true,  true,  false
+                       true,  true,  true,  false, true,  true,  false,
                        false, false, false, true),
     (2, 'PLACE_OWNER', true,  true,  true,  true,  false, false,
-                       false, true,  false, false, false, true,  true
+                       false, true,  false, false, false, true,  true,
                        true,  true,  true,  true),
     (3, 'SYS_ADMIN',   true,  true,  true,  true,  true,  true,
-                       false, true,  false, true,  true,  false, false
+                       false, true,  false, true,  true,  false, false,
                        true,  true,  true,  true);
 INSERT INTO FEATURE(
     ID,
