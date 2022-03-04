@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignupRequest {
+public class UpdateRequest {
+
+    private Long id;
 
     private String username;
 
@@ -19,5 +21,4 @@ public class SignupRequest {
 
     private String name;
 
-    private String role;
 }

@@ -1,60 +1,53 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.dto.userDto.SignupRequest;
-import dk.bec.polonez.reservationsystem.dto.userDto.SignupResponse;
-import dk.bec.polonez.reservationsystem.model.Role;
-import dk.bec.polonez.reservationsystem.model.User;
-import dk.bec.polonez.reservationsystem.repository.RoleRepository;
-import dk.bec.polonez.reservationsystem.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import dk.bec.polonez.reservationsystem.dto.userDto.*;
+import dk.bec.polonez.reservationsystem.service.UserService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/user/")
+@RequestMapping("/api/users/")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    private final RoleRepository roleRepository;
-
-    private final PasswordEncoder encoder;
-
-    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.encoder = encoder;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @PostMapping("signup")
+    @PostMapping()
     public SignupResponse registerUser(@RequestBody SignupRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: Username is already taken!");
-        }
+        return userService.createUser(signUpRequest);
+    }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: Email is already in use!");
-        }
+    @PutMapping()
+    public UpdateResponse updateUser(@RequestBody UpdateRequest updateRequest) {
+        return userService.updateUser(updateRequest);
+    }
 
-        String strRole = signUpRequest.getRole().toUpperCase();
-        Role role = roleRepository.findByName(strRole)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found"));
+    @GetMapping()
+    public List<ProfileResponse> getAll() {
+        return userService.getAllUsers();
+    }
 
-        User user = User.builder()
-                .username(signUpRequest.getUsername())
-                .password(encoder.encode(signUpRequest.getPassword()))
-                .email(signUpRequest.getEmail())
-                .role(role)
-                .build();
+    @GetMapping("{id}")
+    public ProfileResponse getById(@PathVariable Long id) {
+        return userService.getById(id);
+    }
 
-        User savedUser = userRepository.save(user);
-        return SignupResponse.builder()
-                .username(savedUser.getUsername())
-                .email(savedUser.getEmail())
-                .build();
+    @PutMapping("block/{id}")
+    public ProfileResponse blockUser(@PathVariable Long id) {
+        return userService.block(id);
+    }
+
+    @PutMapping("unblock/{id}")
+    public ProfileResponse unblockUser(@PathVariable Long id) {
+        return userService.unblock(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public DeleteResponse deleteUser(@PathVariable Long id) {
+        return userService.delete(id);
     }
 }
