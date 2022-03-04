@@ -48,6 +48,6 @@ public class OfferController {
 
     @PostMapping("{offerId}/features")
     public ResponseEntity<ResponseOfferFeatureDto> addFeatureToOffer(@RequestParam long featureId, @PathVariable long offerId) {
-        return new ResponseEntity<>(offerService.addFeatureToOffer(featureId, offerId), HttpStatus.OK);
+        return new ResponseEntity<>(offerService.addFeatureToOffer(featureId, offerId), HttpStatus.CREATED);
     }
 }
