@@ -9,10 +9,12 @@ import dk.bec.polonez.reservationsystem.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reservation/")
+@RequestMapping("/api/reservations/")
 public class ReservationController {
 
     private final ReservationService reservationService;
@@ -22,12 +24,17 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<Reservation> getAllReservations() {
-        return reservationService.getAll();
+    public List<ResponseReservationDto> getAllReservations(@RequestParam boolean sortedByCreationDate) {
+        List<ResponseReservationDto> reservations = reservationService.getAll();
+
+        if(sortedByCreationDate && !reservations.isEmpty())
+            reservations.sort(Comparator.comparingLong(ResponseReservationDto::getCreatedAt));
+
+        return reservations;
     }
 
     @GetMapping("{id}")
-    public Reservation getReservationById(@PathVariable long id) {
+    public ResponseReservationDto getReservationByReservationId(@PathVariable long id) {
         return reservationService.getById(id);
     }
 
@@ -48,4 +55,5 @@ public class ReservationController {
     public ResponseReservationDto updateReservation(@RequestBody UpdateReservationDto reservationDto) {
         return reservationService.updateReservation(reservationDto);
     }
+
 }

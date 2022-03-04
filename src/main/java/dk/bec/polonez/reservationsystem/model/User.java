@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -30,4 +31,7 @@ public class User {
     private Role role;
 
     private boolean blocked;
+
+    @OneToMany
+    private List<Reservation> reservations;
 }

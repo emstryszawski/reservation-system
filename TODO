@@ -21,17 +21,17 @@ TODO endpoints from OfferFeautre to Offer and Feature separately Kacper
 4.	add discount codes TODO (add crud to discountController) Karol
 5.	See all reservations for his place TODO (extract user type and check if its user or placeowner then return specific reservations)
 2.	System admin
-1.	Create users, block users, unblock TODO (userController endpoints) Mateusz
+1.	Create users, block users, unblock TODO (userController endpoints) Mateusz DONE
 2.	Verification & Approval of Place-Owner request TODO (offerController add accepting and declining endpoint/s) Emil
 3.	Can add/remove places TODO (whole CRUD methods in offerController) Emil
 4.	add new features, attractions to places TODO (featureController - whole CRUD needed, add endpoint for OfferController) Karol
 3.	Regular user
 1.	Can register himself TODO DONE
 2.	Can login TODO DONE
-3.	Make reservations, cancel, edit TODO (check reservation status and then delete or return 403) Mateusz
-4.	List all his reservations TODO (extract user type and check if its user or placeowner then return specific reservations) Mateusz
+3.	Make reservations, cancel, edit TODO (check reservation status and then delete or return 403) Mateusz DONE
+4.	List all his reservations TODO (extract user type and check if its user or placeowner then return specific reservations) Mateusz DONE //TODO: check logged user's rights
 5.	View single reservation by id TODO DONE
-6.	Sort/Filter reservations by date TODO Mateusz
+6.	Sort/Filter reservations by date TODO Mateusz DONE
 4.	Premium user [optional]
 1.	Can use premium features / attractions
 2.	Features:

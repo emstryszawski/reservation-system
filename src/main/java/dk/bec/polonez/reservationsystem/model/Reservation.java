@@ -33,4 +33,24 @@ public class Reservation {
     @ManyToOne
     @JoinColumn
     private Offer offer;
+
+
+    public boolean collides(Reservation otherReservation) {
+
+        Reservation currentReservation = this;
+
+        if(currentReservation.getDateTo() > otherReservation.getDateFrom() && currentReservation.getDateTo() < otherReservation.getDateTo())
+            return true;
+
+        if(currentReservation.getDateFrom() < otherReservation.getDateFrom() && currentReservation.getDateTo() < otherReservation.getDateTo())
+            return true;
+
+        if(otherReservation.getDateTo() > currentReservation.getDateFrom() && otherReservation.getDateTo() < currentReservation.getDateTo())
+            return true;
+
+        if(otherReservation.getDateFrom() < currentReservation.getDateFrom() && otherReservation.getDateTo() < currentReservation.getDateTo())
+            return true;
+
+        return false;
+    }
 }

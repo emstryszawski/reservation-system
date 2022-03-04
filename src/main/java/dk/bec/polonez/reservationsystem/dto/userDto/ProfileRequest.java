@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignupRequest {
+public class ProfileRequest {
 
     private String username;
 
@@ -17,7 +17,6 @@ public class SignupRequest {
 
     private String email;
 
-    private String name;
-
     private String role;
+
 }
