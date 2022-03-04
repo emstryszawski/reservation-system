@@ -1,6 +1,6 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.dto.userDto.*;
+import dk.bec.polonez.reservationsystem.dto.user.*;
 import dk.bec.polonez.reservationsystem.service.UserService;
 import org.springframework.web.bind.annotation.*;
 

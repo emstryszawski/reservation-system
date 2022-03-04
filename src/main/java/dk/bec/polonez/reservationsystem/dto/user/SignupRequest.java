@@ -1,4 +1,4 @@
-package dk.bec.polonez.reservationsystem.dto.userDto;
+package dk.bec.polonez.reservationsystem.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,17 +9,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponse {
-
-    private Long id;
+public class SignupRequest {
 
     private String username;
 
-    private String name;
+    private String password;
 
     private String email;
 
-    private String roleName;
+    private String name;
 
-    private boolean blocked;
+    private String role;
 }
