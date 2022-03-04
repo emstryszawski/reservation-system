@@ -1,12 +1,14 @@
 package dk.bec.polonez.reservationsystem.controller;
 
-import dk.bec.polonez.reservationsystem.dto.offerDto.CreateOfferDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.OfferDto;
-import dk.bec.polonez.reservationsystem.dto.offerDto.ResponseOfferFeatureDto;
-import dk.bec.polonez.reservationsystem.model.Offer;
+import dk.bec.polonez.reservationsystem.dto.offer.CreateOfferDto;
+import dk.bec.polonez.reservationsystem.dto.offer.OfferDto;
+import dk.bec.polonez.reservationsystem.dto.offer.ResponseOfferFeatureDto;
 import dk.bec.polonez.reservationsystem.service.OfferService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,22 +32,22 @@ public class OfferController {
     }
 
     @PostMapping
-    public OfferDto addOffer(@RequestBody CreateOfferDto offerDto) {
-        return offerService.addOffer(offerDto);
+    public ResponseEntity<OfferDto> addOffer(@Valid @RequestBody CreateOfferDto offerDto) {
+        return new ResponseEntity<>(offerService.addOffer(offerDto), HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public OfferDto updateOffer(@PathVariable long id, @RequestBody CreateOfferDto offerDto) {
-        return offerService.updateOffer(id, offerDto);
+    public ResponseEntity<OfferDto> updateOffer(@PathVariable long id, @Valid @RequestBody CreateOfferDto offerDto) {
+        return new ResponseEntity<>(offerService.updateOffer(id, offerDto), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
-    public OfferDto deleteOffer(@PathVariable long id) {
-        return offerService.deleteOffer(id);
+    public ResponseEntity<OfferDto> deleteOffer(@PathVariable long id) {
+        return new ResponseEntity<>(offerService.deleteOffer(id), HttpStatus.OK);
     }
 
-    @PostMapping("{id}/feature")
-    public ResponseOfferFeatureDto addFeatureToOffer(@RequestParam long featureId, @PathVariable long offerId) {
-        return offerService.addFeatureToOffer(featureId, offerId);
+    @PostMapping("{offerId}/features")
+    public ResponseEntity<ResponseOfferFeatureDto> addFeatureToOffer(@RequestParam long featureId, @PathVariable long offerId) {
+        return new ResponseEntity<>(offerService.addFeatureToOffer(featureId, offerId), HttpStatus.CREATED);
     }
 }
