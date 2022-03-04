@@ -35,7 +35,7 @@ public class DiscountService {
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
 
-        if(!currentUserRole.hasDiscountReadPrivilege())
+        if(!currentUserRole.hasDiscountReadPrivilege() || currentUser.isBlocked())
             throw  new NoAccessToOperationException();
 
         Optional<Discount> discount = discountRepository.findDiscountByCode(code);
@@ -48,7 +48,7 @@ public class DiscountService {
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
 
-        if(!currentUserRole.hasDiscountReadPrivilege())
+        if(!currentUserRole.hasDiscountReadPrivilege() || currentUser.isBlocked())
             throw  new NoAccessToOperationException();
 
         Optional<Discount> discount = discountRepository.findById(id);
@@ -68,7 +68,7 @@ public class DiscountService {
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
 
-        if(!currentUserRole.hasDiscountDeletePrivilege())
+        if(!currentUserRole.hasDiscountDeletePrivilege() || currentUser.isBlocked())
             throw  new NoAccessToOperationException();
 
         Optional<Discount> optionalDiscount  = discountRepository.findById(id);
@@ -87,7 +87,7 @@ public class DiscountService {
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
 
-        if(! currentUserRole.hasDiscountUpdatePrivilege())
+        if(!currentUserRole.hasDiscountUpdatePrivilege() || currentUser.isBlocked())
             throw  new NoAccessToOperationException();
 
         Optional<Discount> optionalDiscount = discountRepository.findById(id);
@@ -106,7 +106,7 @@ public class DiscountService {
         User currentUser = authService.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
 
-        if(!currentUserRole.hasDiscountCreationPrivilege())
+        if(!currentUserRole.hasDiscountCreationPrivilege() || currentUser.isBlocked())
             throw  new NoAccessToOperationException();
 
         Discount discount = modelMapper.map(discountDto, Discount.class);
