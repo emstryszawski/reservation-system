@@ -27,7 +27,9 @@ public class Offer {
 
     private double pricePerUnit;
 
-    private String unitDuration;
+    private OfferDurationUnit durationUnit;
+
+    private int units;
 
     private String description;
 
