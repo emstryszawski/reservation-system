@@ -1,12 +1,10 @@
 package dk.bec.polonez.reservationsystem;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.bec.polonez.reservationsystem.dto.userDto.LoginRequest;
 import dk.bec.polonez.reservationsystem.dto.userDto.SignupRequest;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 
 // run all tests in sequence rather than just one
