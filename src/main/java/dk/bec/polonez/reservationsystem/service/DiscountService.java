@@ -75,8 +75,8 @@ public class DiscountService {
         Discount discountToDelete = optionalDiscount
                 .orElseThrow(() -> new NotFoundObjectException(Discount.class, id));
 
-        if(!discountToDelete.getOffer().equals(currentUser))
-        throw  new NoAccessToOperationException("You can not delete discounts of other users");
+        if(!discountToDelete.getOffer().getOwner().equals(currentUser) && !authService.isAdminLoggedIn())
+            throw  new NoAccessToOperationException("You can not delete discounts of other users");
 
         discountRepository.delete(discountToDelete);
         return modelMapper.map(discountToDelete, DiscountDto.class);
@@ -94,7 +94,7 @@ public class DiscountService {
         Discount discount = optionalDiscount
                 .orElseThrow(() -> new NotFoundObjectException(Discount.class, id));
 
-        if(!discount.getOffer().equals(currentUser))
+        if(!discount.getOffer().getOwner().equals(currentUser) && !authService.isAdminLoggedIn())
             throw  new NoAccessToOperationException("You can not update discounts of other users");
 
         modelMapper.map(discountDto, discount);
@@ -111,7 +111,7 @@ public class DiscountService {
 
         Discount discount = modelMapper.map(discountDto, Discount.class);
 
-        if(!discount.getOffer().equals(currentUser))
+        if(!discount.getOffer().getOwner().equals(currentUser) && !authService.isAdminLoggedIn())
             throw  new NoAccessToOperationException("You can not add discount to another user offer");
 
         Discount savedDiscount = discountRepository.save(discount);
