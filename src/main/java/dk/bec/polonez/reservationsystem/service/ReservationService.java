@@ -1,8 +1,6 @@
 package dk.bec.polonez.reservationsystem.service;
 
-import dk.bec.polonez.reservationsystem.dto.notification.ReservationConfirmationInput;
-import dk.bec.polonez.reservationsystem.dto.notification.ReservationStatusNotificationInput;
-import dk.bec.polonez.reservationsystem.dto.notification.UpcomingEventsNotificationInput;
+import dk.bec.polonez.reservationsystem.dto.notification.*;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.CreateReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.ResponseReservationDto;
 import dk.bec.polonez.reservationsystem.dto.reservationDto.UpdateReservationDto;
@@ -12,20 +10,17 @@ import dk.bec.polonez.reservationsystem.repository.ReservationRepository;
 import dk.bec.polonez.reservationsystem.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
@@ -42,11 +37,12 @@ public class ReservationService {
 
     //TODO: Cancel reservation
 
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository, AuthService authService) {
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, OfferRepository offerRepository, AuthService authService, MailService mailService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.offerRepository = offerRepository;
         this.authService = authService;
+        this.mailService = mailService;
         this.modelMapper = new ModelMapper();
 
         PropertyMap<Reservation, ResponseReservationDto> responseReservationMap = new PropertyMap<>() {
@@ -177,8 +173,8 @@ public class ReservationService {
             String email = updatedReservation.getUser().getEmail();
             ReservationStatusNotificationInput input = ReservationStatusNotificationInput.builder()
                     .username(updatedReservation.getUser().getUsername())
-                    .reservationStatus(reservation.getStatus())
-                    .reservationInfo(getReservationDetails(reservation))
+                    .reservationStatus(updatedReservation.getStatus())
+                    .reservationInfo(getReservationDetails(updatedReservation))
                     .build();
             input.setReservationStatus(updatedReservation.getStatus());
             mailService.sendReservationStatusNotification(email, input);
