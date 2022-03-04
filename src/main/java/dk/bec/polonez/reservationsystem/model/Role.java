@@ -35,4 +35,14 @@ public class Role {
 
     @Accessors(fluent = true)
     public boolean hasOfferDeleteOthersOfferPrivilege;
+
+    /**Discount privileges*/
+    @Accessors(fluent = true)
+    private boolean hasDiscountCreationPrivilege;
+    @Accessors(fluent = true)
+    private boolean hasDiscountReadPrivilege;
+    @Accessors(fluent = true)
+    private boolean hasDiscountDeletePrivilege;
+    @Accessors(fluent = true)
+    private boolean hasDiscountUpdatePrivilege;
 }
